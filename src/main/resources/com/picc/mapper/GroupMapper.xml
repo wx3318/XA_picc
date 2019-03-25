@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.GroupMapper">
+  <resultMap id="BaseResultMap" type="com.picc.entity.Group">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="created_name" jdbcType="VARCHAR" property="createdName" />
+    <result column="created_date" jdbcType="DATE" property="createdDate" />
+    <result column="created_id" jdbcType="INTEGER" property="createdId" />
+    <result column="update_id" jdbcType="INTEGER" property="updateId" />
+    <result column="update_Name" jdbcType="VARCHAR" property="updateName" />
+    <result column="update_time" jdbcType="DATE" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, group_name, state, created_name, created_date, created_id, update_id, 
+    update_Name, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from group_p
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+      <!-- 获取符合查询条件的组别列表 -->
+  <select id="queryGroupList" resultType="java.util.Map" parameterType="com.picc.entity.Group">
+  
+	  SELECT 
+	    id AS groupId,
+	    group_name AS groupName
+	 FROM  group_p 
+	    <include refid="queryParams"/>
+    ORDER BY created_date DESC
+ 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from group_p
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.picc.entity.Group">
+    insert into group_p (id, group_name,
+      state, created_name, created_date, 
+      created_id, update_id, update_Name, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{groupName,jdbcType=VARCHAR}, #{areaId,jdbcType=INTEGER}, 
+      #{state,jdbcType=VARCHAR}, #{createdName,jdbcType=VARCHAR}, #{createdDate,jdbcType=DATE}, 
+      #{createdId,jdbcType=INTEGER}, #{updateId,jdbcType=INTEGER}, #{updateName,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.picc.entity.Group">
+    insert into group_p
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="groupName != null">
+        group_name,
+      </if>
+      <if test="areaId != null">
+        area_id,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="createdName != null">
+        created_name,
+      </if>
+      <if test="createdDate != null">
+        created_date,
+      </if>
+      <if test="createdId != null">
+        created_id,
+      </if>
+      <if test="updateId != null">
+        update_id,
+      </if>
+      <if test="updateName != null">
+        update_Name,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="groupName != null">
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null">
+        #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="createdName != null">
+        #{createdName,jdbcType=VARCHAR},
+      </if>
+      <if test="createdDate != null">
+        #{createdDate,jdbcType=DATE},
+      </if>
+      <if test="createdId != null">
+        #{createdId,jdbcType=INTEGER},
+      </if>
+      <if test="updateId != null">
+        #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="updateName != null">
+        #{updateName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.picc.entity.Group">
+    update group_p
+    <set>
+      <if test="groupName != null">
+        group_name = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null">
+        area_id = #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="createdName != null">
+        created_name = #{createdName,jdbcType=VARCHAR},
+      </if>
+      <if test="createdDate != null">
+        created_date = #{createdDate,jdbcType=DATE},
+      </if>
+      <if test="createdId != null">
+        created_id = #{createdId,jdbcType=INTEGER},
+      </if>
+      <if test="updateId != null">
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="updateName != null">
+        update_Name = #{updateName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.picc.entity.Group">
+    update group_p
+    set group_name = #{groupName,jdbcType=VARCHAR},
+      area_id = #{areaId,jdbcType=INTEGER},
+      state = #{state,jdbcType=VARCHAR},
+      created_name = #{createdName,jdbcType=VARCHAR},
+      created_date = #{createdDate,jdbcType=DATE},
+      created_id = #{createdId,jdbcType=INTEGER},
+      update_id = #{updateId,jdbcType=INTEGER},
+      update_Name = #{updateName,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getGroupList" resultMap="BaseResultMap">
+	 		SELECT id,group_name
+	 		FROM group_p
+  </select>
+  <insert id="saveGroup" parameterType="com.picc.entity.Group">
+		INSERT INTO group_p
+		(group_name)
+		VALUES #{group.groupName}
+  </insert>
+  <update id="updateGroupByKey" parameterType="com.picc.entity.Group">
+ 		update group_p p
+ 	<set>
+ 	 	p.group_name=#{group.groupName}
+ 	</set>
+ 	<where>
+ 		p.group_name=#{group.id}	
+ 	</where>
+   </update>
+ 	
+ 	   <!--查询条件-->
+	  <sql id="queryParams">
+	         <trim prefix="where" prefixOverrides="and | or ">
+	         
+	         <if test="state != null &amp;&amp; state != ''">
+	           and state = #{state,jdbcType=VARCHAR}
+	         </if>
+	         <if test="groupName != null &amp;&amp; groupName != ''">
+	           and group_name like  concat('%',#{groupName,jdbcType=VARCHAR},'%')  
+	         </if>
+	      
+	         </trim>
+	  </sql>
+</mapper>

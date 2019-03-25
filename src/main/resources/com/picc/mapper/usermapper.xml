@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.UserMapper">
+ <resultMap type="com.picc.entity.User" id="UserMap">
+		<id column="user_id" property="user_id"/>
+          <result column="username" property="username"/>
+          <result column="role_name" property="role" />
+          <result column="name"  property="name"/>
+          <result column="password"  property="password"/>
+          <result column="group_name"  property="group"/>
+          <result column="group_id"  property="groupId"/>
+          <result column="yx_id" property="yx_id"/>
+          <result column="sex"  property="sex"/>
+          <result column="phone"  property="phone"/>
+          <result column="id_card" property="id_card"/>
+          <result column="jion_work" property="jion_work" />
+          <result column="start_work"  property="start_work"/>
+          <result column="end_work"  property="end_work"/>
+          <result column="work_mes" property="work_mes"/>
+          <result column="station" property="station" />
+          <result column="phone_show"  property="phone_show"/>
+          <result column="address" property="address"/>
+          <result column="education" property="education"/>
+          <result column="j_phone" property="j_phone"/>
+          <result column="contract" property="contract"/>
+          <result column="message" property="message"/>
+          <result column="role_id" property="roleId"/> 
+          <result column="group_date" property="groupDate"/>         
+</resultMap>
+
+ 	<select id="doLogin" resultType="com.picc.entity.User" parameterType="com.picc.entity.User" >  
+        select u.user_id,u.username,u.password,u.name,u.yx_id from user u 
+        where u.username = #{username} and u.password= #{password} and u.work_mes='在职';
+    </select>
+    <select id="getUser" resultMap="UserMap" parameterType="int">
+     select  
+     u.user_id user_id,u.name,r.name role_name ,u.group_id,p.group_name,u.sex,u.phone,u.id_card,u.jion_work,u.j_phone,
+     u.start_work,u.end_work,u.work_mes,u.station,u.phone_show,u.username,u.yx_id,u.address,u.education,
+     u.message,u.contract,u.role_id,u.password,u.group_date
+     from 
+     user u left join bse_plat_role r on u.role_id=r.id
+ 	 left join group_p p on u.group_id=p.id 
+     where u.user_id=#{id};
+    </select>
+    <!-- 员工信息修改 -->
+    <update id="savePassword"  parameterType="com.picc.entity.User">
+    	update user 
+    	<set>
+    		password=#{password}
+    	</set>
+    	where user_id=#{user_id}
+    </update>
+    <!-- 根据用户名查找用户信息-->
+    <select id="getUserByuname" resultMap="UserMap" parameterType="int">
+    	select  
+     u.user_id user_id, u.password, u.name,r.name role_name ,u.group_id,p.group_name,u.sex,u.phone,u.id_card,u.jion_work,u.j_phone,
+     u.start_work,u.end_work,u.work_mes,u.station,u.phone_show,u.username,u.yx_id,u.address,u.education,
+     u.message,u.contract,u.role_id,u.group_date
+      from 
+      user u left join bse_plat_role r on u.role_id=r.id
+ 		left join group_p p on u.group_id=p.id 
+     where u.username=#{username} and  work_mes='在职';
+    </select>
+    
+    <update id="updateUser" parameterType="com.picc.entity.User">
+    	UPDATE user u
+    	SET u.username= #{username},
+		    u.name= #{name},
+		    u.group_id = #{groupId},
+		    u.sex=#{sex},
+		    u.phone= #{phone},
+		    u.id_card= #{id_card},
+		    u.jion_work= #{jion_work , jdbcType=DATE},
+		    u.start_work= #{start_work,jdbcType=DATE},
+		    u.work_mes=#{work_mes},
+		    u.station=#{station},
+		    u.education=#{contract},
+		    u.yx_id=#{yx_id},
+		    u.phone_show=#{phone_show},
+		    u.education=#{education},
+		    u.j_phone=#{j_phone},
+		    u.address=#{address},
+		    u.message=#{message},
+		    u.role_id=#{roleId},
+		    u.updated_id=#{updateId},
+		    u.updated_name=#{updateName},
+		    u.updated_date= #{updateTime,jdbcType=DATE},
+		    u.group_date= #{groupDate,jdbcType=DATE},
+		    u.end_work= #{end_work,jdbcType=DATE}
+	 
+    		where u.user_id=#{user_id} 
+    </update>
+    <!-- 录入员工 -->
+    <insert id="saveUser" keyProperty="user_id" useGeneratedKeys="true" parameterType="com.picc.entity.User">
+    	insert into user
+		    <trim prefix="(" suffix=")" suffixOverrides=",">
+		      <if test="username != null  and username !=''">
+		        username,
+		      </if>
+		      <if test="password != null and password !=''">
+		        password,
+		      </if>
+		      <if test="name != null and name !=''">
+		        name,
+		      </if>
+		      <if test="groupId != null and groupId !=''">
+		        group_id,
+		      </if>
+		      <if test="sex != null and sex !=''">
+		        sex,
+		      </if>
+		      <if test="phone != null and phone !=''">
+		        phone,
+		      </if>
+		      <if test="id_card != null and id_card !=''">
+		        id_card,
+		      </if>
+		      <if test="jion_work != null">
+		        jion_work,
+		      </if>
+		      <if test="start_work != null">
+		        start_work,
+		      </if>
+		       <if test="end_work != null">
+		        end_work,
+		      </if>
+		       <if test="work_mes != null and work_mes !=''">
+		        work_mes,
+		      </if>		      
+		       <if test="station != null and station !=''">
+		        station,
+		      </if>
+		      
+		       <if test="contract != null and contract !=''">
+		        contract,
+		      </if>
+		      
+		       <if test="yx_id != null and yx_id !=''">
+		        yx_id,
+		      </if>
+		      <if test="phone_show != null and phone_show !=''">
+		        phone_show,
+		      </if>
+		      <if test="education != null and education !=''">
+		        education,
+		      </if>
+		      <if test="j_phone != null and j_phone !=''">
+		        j_phone,
+		      </if>
+		      <if test="address != null and address !=''">
+		        address,
+		      </if>
+		      <if test="message != null and message !=''">
+		        message,
+		      </if>
+		      <if test="roleId != null and roleId !=''">
+		        role_id,
+		      </if>
+		      <if test="createdId != null and createdId !=''">
+		        created_id,
+		      </if>	
+		      <if test="createdName != null and createdName !=''">
+		        created_name,
+		      </if>	
+		      <if test="createdDate != null ">
+		        created_date,
+		      </if>
+		      <if test="groupDate != null ">
+		        group_date,
+		      </if>				      
+		    </trim>
+		    <trim prefix="values (" suffix=")" suffixOverrides=",">
+		     <if test="username != null  and username !=''">
+		        #{username},
+		      </if>
+		      <if test="password != null and password !=''">
+		        #{password},
+		      </if>
+		      <if test="name != null and name !=''">
+		        #{name},
+		      </if>
+		      <if test="groupId != null and groupId !=''">
+		        #{groupId},
+		      </if>
+		      <if test="sex != null and sex !=''">
+		        #{sex},
+		      </if>
+		      <if test="phone != null and phone !=''">
+		        #{phone},
+		      </if>
+		      <if test="id_card != null and id_card !=''">
+		        #{id_card},
+		      </if>
+		      <if test="jion_work != null">
+		        #{jion_work , jdbcType=DATE},
+		      </if>
+		      <if test="start_work != null">
+		        #{start_work,jdbcType=DATE},
+		      </if>
+		       <if test="end_work != null">
+		        #{end_work,jdbcType=DATE},
+		      </if>
+		       <if test="work_mes != null and work_mes !=''">
+		        #{work_mes},
+		      </if>		      
+		       <if test="station != null and station !=''">
+		        #{station},
+		      </if>
+		      
+		       <if test="contract != null and contract !=''">
+		        #{contract},
+		      </if>
+		      
+		       <if test="yx_id != null and yx_id !=''">
+		        #{yx_id},
+		      </if>
+		      <if test="phone_show != null and phone_show !=''">
+		        #{phone_show},
+		      </if>
+		      <if test="education != null and education !=''">
+		        #{education},
+		      </if>
+		      <if test="j_phone != null and j_phone !=''">
+		        #{j_phone},
+		      </if>
+		      <if test="address != null and address !=''">
+		        #{address},
+		      </if>
+		      <if test="message != null and message !=''">
+		        #{message},
+		      </if>
+		      <if test="roleId != null and roleId !=''">
+		        #{roleId},
+		      </if>
+		      <if test="createdId != null and createdId !=''">
+		        #{createdId},
+		      </if>	
+		      <if test="createdName != null and createdName !=''">
+		        #{createdName},
+		      </if>	
+		      <if test="createdDate != null">
+		        #{createdDate,jdbcType=DATE},
+		      </if>
+		      <if test="groupDate != null">
+		        #{groupDate,jdbcType=DATE},
+		      </if>	
+		    </trim>
+    </insert>	
+    <select id="showUser" resultMap="UserMap">
+    	  select  
+     		u.user_id user_id,u.name,r.name role_name ,u.group_id,p.group_name,u.sex,u.phone,u.id_card,u.jion_work,u.j_phone,
+     		u.start_work,u.end_work,u.work_mes,u.station,u.phone_show,u.username,u.yx_id,u.address,u.education,
+    		 u.message,u.contract,u.role_id,u.group_date
+     	 from 
+      		user u left join bse_plat_role r on u.role_id=r.id
+ 			left join group_p p on u.group_id=p.id
+    	 		<where>
+    	 		   	<if test="group_id !=null and group_id!=0 ">
+    					and u.group_id = #{group_id}	
+    				</if>
+    				<if test="username !=null and username!=0 ">
+    		    		and u.username = #{username}
+    				</if>
+    				<if test="name !=null and name!=''">
+    		    		and u.name like "%"#{name}"%"
+    				</if>
+    				<if test="work_mes !=null and work_mes!='' ">
+    		    		and u.work_mes =#{work_mes}
+    				</if>
+    				
+    	 		</where> 
+    	 		<if test="pageutil !=null "> 
+    	 			<if test="pageutil.beginSize>-1 " >
+    				limit #{pageutil.beginSize},#{pageutil.pageSize}
+    				</if>
+    			</if>	
+    </select>
+    <select id="userCount" resultType="int" >
+    	select count(*) from user u
+    	<where>
+    		<if test="group_id !=null and group_id!=0 ">
+    			and u.group_id = #{group_id}
+		    		
+    		</if>
+    		<if test="username !=null and username!=0 ">
+    		    and u.username = #{username}
+    		</if>
+    		<if test="name !=null and name!='' ">
+    		    and u.name like "%"#{name}"%"
+    		</if>
+    		<if test="work_mes !=null and work_mes!='' ">
+    		    and u.work_mes = #{work_mes}
+    		</if>
+    	</where>
+    </select>
+    <select id="getUserListMap" resultType="java.util.Map" parameterType="com.picc.entity.User">
+    	 select  
+     		u.user_id user_id,u.name,r.name role_name ,u.group_id,p.group_name,u.sex,u.phone,u.id_card,u.jion_work,u.j_phone,
+     		u.start_work,u.end_work,u.work_mes,u.station,u.phone_show,u.username,u.yx_id,u.address,u.education,
+    		 u.message,u.contract,u.role_id,u.group_date
+     	 		from 
+      		user u left join bse_plat_role r on u.role_id=r.id
+ 			left join group_p p on u.group_id=p.id
+    	 		<where>
+    	 		   	<if test="groupId !=null and groupId!=0 ">
+    					and u.group_id = #{groupId}	
+    				</if>
+    				<if test="username !=null and username!=0 ">
+    		    		and u.username = #{username}
+    				</if>
+    				<if test="name !=null and name!=''">
+    		    		and u.name like "%"#{name}"%"
+    				</if>
+    				<if test="work_mes !=null and work_mes!='' ">
+    		    		and u.work_mes =#{work_mes}
+    				</if>
+    				<!-- 当月在职人员 -->
+    				<if test="mesDate !=null">
+    					and u.group_id is not null
+    					and ( (work_mes='在职' and start_work <![CDATA[<=]]> #{mesDateEnd,jdbcType=DATE})  or (end_work <![CDATA[<=]]> #{mesDateEnd,jdbcType=DATE} and end_work<![CDATA[>=]]> #{mesDate,jdbcType=DATE} ))
+    					and u.group_id not in (18,19,20)					
+    				</if>
+    				<if test="startDate !=null">
+    					and jion_work <![CDATA[<=]]> #{startDateEnd,jdbcType=DATE}
+    					and jion_work <![CDATA[>=]]> #{startDate,jdbcType=DATE}
+    				</if>
+    				<if test="endDate !=null" >
+    					and end_work <![CDATA[<=]]> #{endDateEnd,jdbcType=DATE}
+    					and end_work <![CDATA[>=]]> #{endDate,jdbcType=DATE}
+    				</if>
+    	 		</where>
+    
+    </select>
+   <!--  select u.user_id user_id,u.username,u.password,r.role_name ,u.name name,u.group_id,u.yx_id  from user u,role r,role_user r_u 
+     where u.user_id = r_u.user_id and  r.id = r_u.role_id and u.yx_id=#{yx_id}; -->
+     <select id="getUserByYxid" resultMap ="UserMap" parameterType="String">
+     select  
+     	u.user_id user_id,u.name,r.name role_name ,u.group_id,p.group_name,u.sex,u.phone,u.id_card,u.jion_work,u.j_phone,
+     	u.start_work,u.end_work,u.work_mes,u.station,u.phone_show,u.username,u.yx_id,u.address,u.education,
+     	u.message,u.contract,u.role_id,u.group_date
+     from 
+     	user u left join bse_plat_role r on u.role_id=r.id
+ 		left join group_p p on u.group_id=p.id
+     where u.yx_id=#{yx_id};
+    </select>
+    <select id="getUserByIdCard" resultMap ="UserMap" parameterType="String">
+    	select  
+     	u.user_id user_id,u.name,r.name role_name ,u.group_id,p.group_name,u.sex,u.phone,u.id_card,u.jion_work,u.j_phone,
+     	u.start_work,u.end_work,u.work_mes,u.station,u.phone_show,u.username,u.yx_id,u.address,u.education,
+     	u.message,u.contract,u.role_id,u.group_date
+     	from 
+     	user u left join bse_plat_role r on u.role_id=r.id
+ 		left join group_p p on u.group_id=p.id
+     where u.id_card=#{idCard};
+    </select>
+    
+    <insert id="importUser"  keyProperty="user_id" useGeneratedKeys="true" parameterType="java.util.List">
+    	insert into user 
+    	( group_id,name,sex,id_card,phone,jion_work,start_work,group_date,work_mes,station,contract,username,yx_id,phone_show,education,j_phone,address,end_work,message,role_id,password ) VALUES
+		<foreach collection="listUser" item="user" index="index" separator=",">
+		(#{user.groupId},#{user.name},#{user.sex},#{user.id_card},#{user.phone},#{user.jion_work},#{user.start_work},#{user.groupDate},#{user.work_mes},#{user.station},#{user.contract},#{user.username},#{user.yx_id},#{user.phone_show},#{user.education},#{user.j_phone},#{user.address},#{user.end_work},#{user.message},#{user.roleId},#{user.password})
+		</foreach> 
+    </insert>
+    
+    
+	  <select id="queryUserList" resultType="java.util.Map" parameterType="java.util.Map">
+	    SELECT
+			 user_id AS userId,
+			  username AS userCode,
+			  NAME AS userName
+	    FROM user
+	    <include refid="queryParams"/>
+	  </select>
+  
+	  <!--查询条件-->
+	  <sql id="queryParams">
+	    <trim prefix="where" prefixOverrides="and | or ">
+	          end_work  is null
+	          <if test="userCode != null &amp;&amp; userCode != ''">
+		        and user_code = #{userCode, jdbcType=VARCHAR}
+		      </if>
+		      <if test="groupId != null &amp;&amp; groupId != ''">
+		        and group_id = #{groupId, jdbcType=BIGINT}
+		      </if>
+		        <if test="roleId != null &amp;&amp; roleId != ''">
+		        and role_id = #{roleId, jdbcType=BIGINT}
+		      </if>
+	    </trim>
+	  </sql>
+    
+</mapper>

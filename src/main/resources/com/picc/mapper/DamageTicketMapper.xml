@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.DamageTicketMapper">
+	<insert id="saveDamageTicketList" keyProperty="id" useGeneratedKeys="true"  parameterType="java.util.List">
+		INSERT INTO damage_ticket_table
+		(damage_ticket_id,report_number,damage_ticket_number,damage_ticket_money,damage_time_money,damage_code,damage_name,repair_code,repair_name,repair_leve,damage_ticket_date)
+		VALUES
+	  	<foreach collection="damageTicketList" item="damageTicket" index="index" separator=",">
+	  	(#{damageTicket.damageTicketId},#{damageTicket.reportNumber},#{damageTicket.damageTicketNumber},#{damageTicket.damageTicketMoney},#{damageTicket.damageTimeMoney},
+	  	#{damageTicket.damageCode},#{damageTicket.damageName},#{damageTicket.repairCode},#{damageTicket.repairName},#{damageTicket.repairLeve},#{damageTicket.damageTicketDate})
+	  	</foreach>
+	</insert>
+</mapper>

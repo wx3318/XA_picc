@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/views/common/">
+	
+	<!-- excludes 标签标示不需要进行装饰的 url -->
+	<excludes>
+		<!-- 静态资源 -->
+		<pattern>/assets/**</pattern>
+		<!-- 异步请求 -->
+		<pattern>/picc/**.ajax</pattern>
+		<pattern>**.ajax</pattern>
+	    <pattern>/error/**</pattern>
+	
+	</excludes>
+
+	<!-- 配置管理装饰器 -->
+	<decorator name="style1_default" page="layout_s1_default.jsp">
+		<!-- 默认拦截装配所有视图请求 -->
+		<pattern>/picc/**.html</pattern>
+		<pattern>/index</pattern>
+	</decorator>	
+</decorators>

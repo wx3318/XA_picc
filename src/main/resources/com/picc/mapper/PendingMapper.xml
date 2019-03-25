@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.PendingMapper">
+	<resultMap type="com.picc.entity.Pending" id="pendingResult">	
+		<result column="report_number" jdbcType="VARCHAR" property="reportNumber" />
+		<result column="registration_number" jdbcType="VARCHAR" property="registrationNumber" />
+		<result column="plate_number" jdbcType="VARCHAR" property="plateNumber" />
+		<result column="assured" jdbcType="VARCHAR" property="assured" />
+		<result column="risk_date" jdbcType="DATE" javaType="java.util.Date" property="riskDate" />
+		<result column="case_character" jdbcType="VARCHAR" property="caseCharacter" />
+		<result column="underwriting_code" jdbcType="VARCHAR" property="underwritingCode" />
+		<result column="assessment_loss" jdbcType="VARCHAR" property="assessmentLoss" />
+		<result column="insurance_code" jdbcType="VARCHAR" property="insuranceCode" />
+		<result column="insurance_name" jdbcType="VARCHAR" property="insuranceName" />
+		<result column="damage_code" jdbcType="VARCHAR" property="damageCode" />
+		<result column="damage_name" jdbcType="VARCHAR" property="damageName" />
+		<result column="case_station" jdbcType="VARCHAR" property="caseStation" />
+		<result column="adjuster_code" jdbcType="VARCHAR" property="adjusterCode" />
+		<result column="adjuster_name" jdbcType="VARCHAR" property="adjusterName" />
+		<result column="institution_name" jdbcType="VARCHAR" property="groupName" />
+		<result column="group_id" jdbcType="VARCHAR" property="groupId" />
+				
+	</resultMap>
+	<insert id="savePendingList" keyProperty="id" useGeneratedKeys="true"  parameterType="java.util.List">
+		INSERT INTO pending_table
+		(report_number,registration_number,policy_number,plate_number,assured,risk_date,case_character,underwriting_code,assessment_loss,insurance_code,
+		insurance_name,damage_code,damage_name,case_station,adjuster_code,adjuster_name,group_id,create_date,user_info,loss)
+		VALUES
+	  	<foreach collection="pendingList" item="pending" index="index" separator=",">
+	  	(#{pending.reportNumber},#{pending.registrationNumber},#{pending.policyNumber},#{pending.plateNumber},#{pending.assured},#{pending.riskDate},
+	  	#{pending.caseCharacter},#{pending.underwritingCode},#{pending.assessmentLoss},#{pending.insuranceCode},#{pending.insuranceName},
+	  	#{pending.damageCode},#{pending.damageName},#{pending.caseStation},#{pending.adjusterCode},#{pending.adjusterName},#{pending.groupId},#{pending.createDate},#{pending.userInfo},#{pending.loss})
+	  	</foreach>
+	</insert>
+	<select id="getPendingListParam" resultMap="pendingResult" parameterType="com.picc.entity.Pending" >
+		select report_number,registration_number,policy_number,plate_number,assured,risk_date,case_character,underwriting_code,assessment_loss,insurance_code,
+		insurance_name,damage_code,damage_name,case_station,adjuster_code,adjuster_name
+		from pending_table
+		<where>
+			case_station &lt;&gt; 4
+			<if test="areaType == 0 ">
+				and area_type is null			
+			</if>
+		</where>
+	</select>
+	<!--区域查询-->
+	<select id="getPendingListByAreaType" parameterType="com.picc.entity.Pending" resultType="java.util.Map">
+		SELECT p.report_number,p.registration_number,p.policy_number,p.plate_number,p.assured,p.risk_date,p.case_character,p.underwriting_code,p.assessment_loss,p.insurance_code,p.insurance_name,p.damage_code,p.damage_name,p.adjuster_code,p.adjuster_name,c.case_station_name,g.group_name group_id
+ 		FROM  pending_table as p
+		LEFT JOIN case_table c ON c.id=p.case_station
+		LEFT JOIN group_p g ON g.id=p.group_id
+		<where>
+			p.case_station &lt;&gt; 4
+			<if test="damageCode == 1 ">
+	    		and (p.damage_name is not null or p.damage_code is not null)
+	    	</if>
+	    	<if test="damageCode == 2 ">
+	    		and p.damage_name is null and p.damage_code is null 
+	    	</if>
+	    	<if test="areaType!=null">
+	    		and p.area_type = #{areaType}
+	    	</if>
+	    	
+		</where>
+	</select>
+	<select id="getPengdingGroup" parameterType="com.picc.entity.Pending" resultType="java.util.Map">
+		SELECT p.id,p.report_number,p.registration_number,p.policy_number,p.plate_number,p.assured,p.risk_date,p.case_character,p.underwriting_code,p.assessment_loss,p.insurance_code,p.insurance_name,p.damage_code,p.damage_name,p.adjuster_code,p.adjuster_name,c.case_station_name,p.loss,g.group_name group_name,p.user_info,u.name
+ 		FROM  pending_table as p
+		LEFT JOIN case_table c ON c.id=p.case_station
+		LEFT JOIN group_p g ON g.id=p.group_id
+		LEFT JOIN user u ON u.username=p.user_info
+		<where>
+			<if test="userInfo == 1 ">
+	    		and user_info is not null and p.case_station &lt;&gt; 4
+	    	</if>
+	    	<if test="userInfo == 2 ">
+	    		and user_info is null and p.group_id not in (13) and p.case_station &lt;&gt; 4
+	    	</if>
+	    	<if test="userInfo != 2 and userInfo != 1 and userInfo!=null">
+	    		and p.user_info=#{userInfo}
+	    	</if>
+	    	<if test="registrationNumber != null and registrationNumber !=''">
+	    		and p.registration_number=#{registrationNumber}
+	    	</if>
+	    	<if test="groupId != null and groupId !=''">
+	    		and p.group_id=#{groupId}
+	    	</if>
+	    	<if test="areaType != null">
+	    	    and p.area_type=#{areaType} and p.case_station &lt;&gt; 4
+	    	</if>
+		</where>
+	</select>
+	<update id="updatePendingInfoById" parameterType="com.picc.entity.Pending">
+		update pending_table
+		set
+		user_info = #{userInfo}
+		where id=#{id} 
+	</update>
+	<!--省内立未理  -->
+	 <select id="getPendingListOnShengEntry" parameterType="com.picc.entity.Pending" resultMap="pendingResult">
+		SELECT p.report_number,p.registration_number,p.plate_number,p.case_station
+ 		FROM
+		(select report_number,registration_number,plate_number,case_character,area_type,group_id,SUBSTRING(underwriting_code,1,6) as institution_code,case_station 
+		from pending_table) as p
+		left join 
+		(SELECT u.institution_name,u.institution_code 
+		FROM institution_table u 
+		WHERE institution_code in (610112,610114,610122,610123,610124,610125,610126)) as i 
+		on i.institution_code=p.institution_code 
+		LEFT JOIN case_table c ON p.case_station=c.id
+		where p.case_station='1'  and i.institution_name is null   and p.case_character LIKE 'T%' and p.area_type is null
+	</select>
+	<!--郊县立未理 -->
+	<select id="getPendingListOnjiaoEntry" parameterType="com.picc.entity.Pending" resultMap="pendingResult">
+		SELECT p.report_number,p.registration_number,p.plate_number,p.case_station,i.institution_name
+ 		FROM
+		(select report_number,registration_number,plate_number,case_character,area_type,group_id,SUBSTRING(underwriting_code,1,6) as institution_code,case_station 
+		from pending_table) as p
+		left join 
+		(SELECT u.institution_name,u.institution_code 
+		FROM institution_table u 
+		WHERE institution_code in (610112,610114,610122,610123,610124,610125,610126)) as i 
+		on i.institution_code=p.institution_code 
+		LEFT JOIN case_table c ON p.case_station=c.id
+		where  i.institution_name is NOT null and p.case_station ='1' and p.area_type is null	
+	</select>
+	<!--省间通赔 -->	
+	<select id="getPendingListOntpEntry" parameterType="com.picc.entity.Pending" resultMap="pendingResult">
+		SELECT p.report_number,p.registration_number,p.plate_number,p.case_station
+ 		FROM
+		(select report_number,registration_number,plate_number,case_character,area_type,group_id,SUBSTRING(underwriting_code,1,6) as institution_code,case_station 
+		from pending_table) as p
+		left join 
+		(SELECT u.institution_name,u.institution_code 
+		FROM institution_table u 
+		WHERE institution_code in (610112,610114,610122,610123,610124,610125,610126)) as i 
+		on i.institution_code=p.institution_code 
+		LEFT JOIN case_table c ON c.id=p.case_station
+		where i.institution_name is null  and p.case_character like 's%' and p.case_station='1'	and p.area_type is null	
+	</select>
+	<!--城区-->
+	<select id="getPendingListOncqEntry" parameterType="com.picc.entity.Pending" resultMap="pendingResult"><!--  -->
+		SELECT p.report_number,p.registration_number,p.plate_number,p.case_station,u1.group_id
+ 		FROM
+		(select report_number,registration_number,plate_number,case_character,insurance_code,area_type,group_id,SUBSTRING(underwriting_code,1,6) as institution_code,case_station 
+		from pending_table) as p
+		left join 
+		(SELECT u.institution_name,u.institution_code 
+		FROM institution_table u 
+		WHERE institution_code in (610112,610114,610122,610123,610124,610125,610126)) as i 
+		on i.institution_code=p.institution_code 
+		left join user u1
+		ON u1.username = p.insurance_code
+		LEFT JOIN case_table c ON c.id = p.case_station
+		where p.case_station='1'  and i.institution_name is null   and p.case_character = 'L' 
+		and u1.group_id  in (1,2,3,4,12) and ( u1.role_id=1 or u1.username in (10062054,8031460,61936588)) and p.area_type is null	
+	</select>
+	<!--辖内-->
+	<select id="getPendingListOnCqXnEntry" parameterType="com.picc.entity.Pending" resultMap="pendingResult">
+		SELECT p.report_number,p.registration_number,p.plate_number,p.case_station
+ 		FROM
+		(select report_number,registration_number,plate_number,case_character,area_type,SUBSTRING(underwriting_code,1,6) as institution_code,case_station
+		from pending_table) as p
+		left join 
+		(SELECT u.institution_name,u.institution_code 
+		FROM institution_table u 
+		WHERE institution_code in (610112,610114,610122,610123,610124,610125,610126)) as i 
+		on i.institution_code=p.institution_code 
+		LEFT JOIN case_table c ON c.id = p.case_station
+		where p.case_station='1'  and i.institution_name is null   and p.case_character = 'L' and p.area_type is null	
+	</select>
+	<!--通赔未结案-->
+	<select id="getPendingListOntpNoEntry" parameterType="com.picc.entity.Pending" resultMap="pendingResult">
+		SELECT p.report_number,p.registration_number,p.plate_number,p.case_station
+ 		FROM
+		(select report_number,registration_number,plate_number,case_character,area_type,group_id,SUBSTRING(underwriting_code,1,6) as institution_code,case_station
+		from pending_table) as p
+		left join 
+		(SELECT u.institution_name,u.institution_code 
+		FROM institution_table u 
+		WHERE institution_code in (610112,610114,610122,610123,610124,610125,610126)) as i 
+		on i.institution_code=p.institution_code 
+		LEFT JOIN case_table c ON c.id = p.case_station
+		where  i.institution_name is null  and p.case_character like 's%' AND p.case_station IN (2,3) and p.area_type is null	
+	</select>	
+	<!--郊县未结案-->
+	<select id="getPendingListOnjiaoNoEntry" parameterType="com.picc.entity.Pending" resultMap="pendingResult">
+		SELECT p.report_number,p.registration_number,p.plate_number,p.case_station,i.institution_name
+ 		FROM
+		(select report_number,registration_number,plate_number,case_character,area_type,SUBSTRING(underwriting_code,1,6) as institution_code,case_station
+		from pending_table) as p
+		left join 
+		(SELECT u.institution_name,u.institution_code 
+		FROM institution_table u 
+		WHERE institution_code in (610112,610114,610122,610123,610124,610125,610126)) as i 
+		on i.institution_code=p.institution_code 
+		LEFT JOIN case_table c ON c.id = p.case_station
+		where  i.institution_name is NOT null and p.case_station IN (2,3) and p.area_type is null
+	</select>
+	<!--城区未结案-->	
+	<select id="getPendingListOnchengNoEntry" parameterType="com.picc.entity.Pending" resultMap="pendingResult"><!--   and   in (1,2,3,4,12)-->
+		SELECT p.report_number,p.registration_number,p.plate_number,p.case_station,u1.group_id
+ 		FROM
+		(select report_number,registration_number,plate_number,case_character,insurance_code,area_type,group_id,SUBSTRING(underwriting_code,1,6) as institution_code,case_station
+		from pending_table) as p
+		left join 
+		(SELECT u.institution_name,u.institution_code 
+		FROM institution_table u 
+		WHERE institution_code in (610112,610114,610122,610123,610124,610125,610126)) as i 
+		on i.institution_code=p.institution_code
+		LEFT JOIN case_table c ON c.id = p.case_station
+		LEFT JOIN `user` u1 on u1.username=p.insurance_code
+		where  i.institution_name is null  and p.case_character NOT like 's%' AND p.case_station IN (2,3) and p.area_type is null
+		
+	</select>
+	<update id="updatePending" parameterType="java.util.List">
+		update pending_table
+       	SET case_station = CASE registration_number
+		<foreach collection="pendingList" item="pending">
+			WHEN #{pending.registrationNumber} THEN #{pending.caseStation}
+		</foreach>
+			END,
+			adjuster_code = CASE registration_number
+		<foreach collection="pendingList" item="pending">
+			WHEN #{pending.registrationNumber} THEN #{pending.adjusterCode}
+		</foreach>
+			END,
+			adjuster_name = CASE registration_number
+		<foreach collection="pendingList" item="pending">
+			WHEN #{pending.registrationNumber} THEN #{pending.adjusterName}
+		</foreach>
+			END,		
+			update_date = CASE registration_number
+		<foreach collection="pendingList" item="pending">
+			WHEN #{pending.registrationNumber} THEN #{pending.updateDate}
+		</foreach>
+			END
+			WHERE registration_number in
+		<foreach collection="pendingList" item="pending" open="(" separator="," close=")">
+			#{pending.registrationNumber} 
+		</foreach>	
+	</update>
+	<update id="updatePendingAreaGroupType" parameterType="java.util.List">
+		update pending_table
+       	SET area_type = CASE registration_number
+		<foreach collection="pendingList" item="pending">
+			WHEN #{pending.registrationNumber} THEN #{pending.areaType}
+		</foreach>
+			END,
+			group_id = CASE registration_number
+		<foreach collection="pendingList" item="pending">
+			WHEN #{pending.registrationNumber} THEN #{pending.groupId}
+		</foreach>
+			END
+			WHERE registration_number in
+		<foreach collection="pendingList" item="pending" open="(" separator="," close=")">
+			#{pending.registrationNumber} 
+		</foreach>	
+	</update>
+	<update id="updatePendingInfoList" parameterType="java.util.List">
+		update pending_table
+       	SET user_info = CASE id
+       	<foreach collection="pendingList" item="pending">
+			WHEN #{pending.id} THEN #{pending.userInfo}
+		</foreach>
+			END
+			WHERE id in
+		<foreach collection="pendingList" item="pending" open="(" separator="," close=")">
+			#{pending.id}
+		</foreach>		
+	</update>
+	<update id="updateAllCaseUserInfo">
+		UPDATE pending_table SET user_info = NULL
+		WHERE  case_station &lt;&gt; 4 and user_info=#{userInfo} and group_id = #{groupIded}
+	</update>
+	<update id="updateCaseUseredInfo">
+		UPDATE pending_table SET group_id = #{groupId} 
+		WHERE  case_station &lt;&gt; 4 and  user_info=#{userInfo} and insurance_code=#{userInfo} and group_id = #{groupIded}  	
+	</update>
+	<update id="updateCaseUserGroup">
+		UPDATE pending_table SET user_info = NULL,group_id = NULL
+		WHERE  case_station &lt;&gt; 4 and user_info=#{userInfo} and group_id = #{groupIded}
+	</update>
+	<select id="getPendingListGroupUser" parameterType="com.picc.entity.Pending" resultMap="pendingResult" >
+		SELECT p.registration_number,p.area_type,p.report_number,p.policy_number,p.plate_number
+ 		FROM  pending_table as p
+ 		WHERE user_info is NULL and group_id is NULL
+	</select>
+</mapper>

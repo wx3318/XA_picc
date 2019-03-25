@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <context id="context1">
+  
+        <commentGenerator>
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+			 <!-- 是否生成注释代时间戳-->
+			  <property name="suppressDate" value="true" />
+		</commentGenerator>
+		
+    <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+<!--          <jdbcConnection connectionURL="jdbc:sqlserver://192.168.1.243:1433;databaseName=picc" driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver" password="123456" userId="tripodfan" /> -->
+  <jdbcConnection connectionURL="jdbc:mysql://192.168.1.243:3306/picc" driverClass="com.mysql.jdbc.Driver" password="Picc123" userId="root" />  
+<!--          <jdbcConnection connectionURL="jdbc:mysql://127.0.0.1:3306/picc" driverClass="com.mysql.jdbc.Driver" password="Picc123" userId="root" />  -->
+	<!-- targetProject:生成PO类的位置 -->
+    <javaModelGenerator targetPackage="com.picc.entity" targetProject="PICCproject" />
+    
+     <!-- targetProject:mapper映射文件生成的位置 -->
+    <sqlMapGenerator targetPackage="com.picc.dao" targetProject="PICCproject" />
+    
+    <!-- targetPackage：mapper接口生成的位置 -->
+    <javaClientGenerator targetPackage="com.picc.dao" targetProject="PICCproject" type="XMLMAPPER" />
+    
+
+<!-- 如果数据库用的是Oracle,SqlServer需要去掉schema属性,MySQL则不需要去掉  schema=""-->
+    <table tableName="performance" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false" >
+    </table>
+  </context>
+</generatorConfiguration>

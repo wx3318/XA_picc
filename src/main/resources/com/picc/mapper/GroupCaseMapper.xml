@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.GroupCaseMapper">
+ <resultMap id="result" type="com.picc.entity.GroupCase">
+ 	<result property="id" column="id"/>
+ 	<result property="groupName" column="group_name"/> 
+ 	<result property="startingNumber" column="starting_number"/> 
+ 	<result property="startTargetNumber" column="start_target_number"/> 
+ 	<result property="budgetTargetNumber" column="budget_target_number"/> 
+ 	<result property="challengNumber" column="challeng_number"/> 
+ 	<result property="endCaseNumber" column="endcase_number"/> 
+ 	<result property="createDate" column="create_date"/> 
+ </resultMap>
+  	<insert id="saveGroupCase" keyProperty="id" useGeneratedKeys="true" parameterType="com.picc.entity.GroupCase">
+  		insert into pending_group_case
+		    <trim prefix="(" suffix=")" suffixOverrides=",">
+		      <if test="groupId != null  and groupId !=''">
+		        group_id,
+		      </if>
+		      <if test="startingNumber != null and startingNumber !=''">
+		        starting_number,
+		      </if>
+		      <if test="startTargetNumber != null and startTargetNumber !=''">
+		        start_target_number,
+		      </if>
+		      <if test="budgetTargetNumber != null and budgetTargetNumber !=''">
+		        budget_target_number,
+		      </if>
+		      <if test="challengNumber != null and challengNumber !=''">
+		        challeng_number,
+		      </if>
+		      <if test="createDate != null">
+		        create_date,
+		      </if>			      
+		    </trim>
+		    <trim prefix="values (" suffix=")" suffixOverrides=",">
+		     <if test="groupId != null  and groupId !=''">
+		        #{groupId},
+		      </if>
+		      <if test="startingNumber != null and startingNumber !=''">
+		        #{startingNumber},
+		      </if>
+		      <if test="startTargetNumber != null and startTargetNumber !=''">
+		        #{startTargetNumber},
+		      </if>
+		      <if test="budgetTargetNumber != null and budgetTargetNumber !=''">
+		        #{budgetTargetNumber},
+		      </if>
+		      <if test="challengNumber != null and challengNumber !=''">
+		        #{challengNumber},
+		      </if>
+		      <if test="createDate != null">
+		        #{createDate , jdbcType=DATE},
+		      </if>
+		    </trim>
+  	</insert>
+  	<select id="getGroupCaseList" resultType="java.util.Map" parameterType="com.picc.entity.GroupCase">
+  		SELECT  c.id,p.group_name,starting_number,start_target_number,budget_target_number,challeng_number,create_date,endcase_number FROM pending_group_case c
+		LEFT JOIN group_p p ON p.id = c.group_id 
+		<where>
+			<if test="groupId!=null and groupId!=''">
+				c.group_id = #{groupId}
+			</if>
+		</where>
+		order by create_date desc
+  	</select>
+  	<select id="getGroupCaseById" parameterType="com.picc.entity.GroupCase" resultMap="result">
+  		SELECT  c.id,p.group_name,starting_number,start_target_number,budget_target_number,challeng_number,create_date,endcase_number FROM pending_group_case c
+		LEFT JOIN group_p p ON p.id = c.group_id
+		where c.id=#{id}
+  	</select>
+  	<select id="getCaseMonthList" resultType="java.util.Map" parameterType="com.picc.entity.GroupCase">
+  		WITH  all_case AS  
+				(
+					SELECT COUNT(*) AS allCaseSize,group_id  
+					FROM pending_table 
+					WHERE case_station &lt;&gt; 4 
+					AND ( create_date <![CDATA[<=]]> #{createDate} OR create_date is NULL)
+					GROUP BY group_id 
+				), 
+					monthend_case AS 
+				(
+					SELECT COUNT(*) AS monthEndCase,group_id  
+					FROM  pending_table 
+					WHERE 
+					case_station = 4 
+					<if test="startDate!=null and endDate!=null">
+					   AND  update_date <![CDATA[>=]]> #{startDate} AND update_date <![CDATA[<=]]> #{endDate}
+					</if>
+					<if test="startDate == null or endDate ==null">
+					 	AND DATE_FORMAT(update_date, '%Y-%m') = DATE_FORMAT(#{createDate}, '%Y-%m') 
+					</if>
+					GROUP BY group_id  
+				), 
+					daynew_case AS 
+				(
+					SELECT COUNT(*) AS dayNewCase,group_id  
+					FROM pending_table 
+					WHERE case_station &lt;&gt; 4 
+					AND create_date=#{createDate}
+					GROUP BY group_id  
+				), 
+					dayend_case AS 
+				(
+					SELECT COUNT(*) AS dayEndCase,group_id  
+					FROM pending_table 
+					WHERE case_station = 4 
+					AND update_date=#{createDate}
+					GROUP BY group_id  
+				)		
+				SELECT 
+					a.group_id,
+					g.group_name,
+					a.starting_number,
+					d.dayNewCase,
+					e.dayEndCase,
+					c.monthEndCase as monthendCase,
+					a.endcase_number AS endcase_number,
+					b.allCaseSize,
+					a.start_target_number,
+					(b.allCaseSize-a.start_target_number) AS startDiff,
+					a.budget_target_number,
+					(b.allCaseSize-a.budget_target_number) AS budgetDiff,
+					a.challeng_number,
+					(b.allCaseSize-a.challeng_number) AS challengDiff
+				FROM  pending_group_case AS a
+				LEFT JOIN  all_case AS b  ON a.group_id = b.group_id
+				LEFT JOIN  monthend_case c ON c.group_id = a.group_id
+				LEFT JOIN  daynew_case d ON d.group_id=a.group_id
+				LEFT JOIN  dayend_case e ON e.group_id=a.group_id
+				LEFT JOIN group_p g ON a.group_id = g.id 
+				WHERE DATE_FORMAT(create_date, '%Y-%m') = DATE_FORMAT(#{createDate}, '%Y-%m') 
+				ORDER BY a.group_id
+  	</select>
+  	<update id="updateGroupCase" parameterType="com.picc.entity.GroupCase" >
+  		update pending_group_case
+  		<set>
+  			<if test="startingNumber!=null">
+  			 starting_number=#{startingNumber},
+  			</if>
+  			<if test="startTargetNumber!=null">
+  			 start_target_number=#{startTargetNumber},
+  			</if>
+  			<if test="budgetTargetNumber!=null">
+  			 budget_target_number=#{budgetTargetNumber},
+  			</if>
+  			<if test="challengNumber!=null">
+  			 challeng_number=#{challengNumber},
+  			</if>
+  			<if test="endCaseNumber!=null">
+  			 endcase_number=#{endCaseNumber},
+  			</if> 		
+  		</set>
+  		where id=#{id}
+  	</update>
+  	<delete id="deletGroupCase" parameterType="com.picc.entity.GroupCase">
+  		DELETE FROM pending_group_case 
+		WHERE 
+		id=#{id}
+  	</delete>
+</mapper>
