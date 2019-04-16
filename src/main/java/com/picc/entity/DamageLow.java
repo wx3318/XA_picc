@@ -1,6 +1,9 @@
 package com.picc.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
+
+import com.google.inject.internal.BindingBuilder;
 
 /**
  * 核损低碳
@@ -27,7 +30,11 @@ public class DamageLow {
 	//核损人
 	private String damageNuclear;
 	//换件金额
-	private String damageNumberMoney;
+	private BigDecimal damageNumberMoney;
+	//修理厂代码
+	private String repairCode;
+	//修理厂名字
+	private String repairName;
 	//低碳修复企业
 	private String repairLowCode;
 	//低碳修复企业名字
@@ -35,22 +42,15 @@ public class DamageLow {
 	//是否低碳
 	private String isLow;
 	//减损金额
-	private String damageLoseMoney;
+	private BigDecimal damageLoseMoney;
 	//低碳金额
-	private String damageLowMoney;
+	private BigDecimal damageLowMoney;
 	//低碳件数
 	private String damageLowNumber;	
 	//修理厂类别
 	private String repairLeve;
 	//低碳时间
 	private Date damageLowDate;
-	
-	public Date getDamageLowDate() {
-		return damageLowDate;
-	}
-	public void setDamageLowDate(Date damageLowDate) {
-		this.damageLowDate = damageLowDate;
-	}
 	public Integer getId() {
 		return id;
 	}
@@ -105,11 +105,23 @@ public class DamageLow {
 	public void setDamageNuclear(String damageNuclear) {
 		this.damageNuclear = damageNuclear;
 	}
-	public String getDamageNumberMoney() {
+	public BigDecimal getDamageNumberMoney() {
 		return damageNumberMoney;
 	}
-	public void setDamageNumberMoney(String damageNumberMoney) {
+	public void setDamageNumberMoney(BigDecimal damageNumberMoney) {
 		this.damageNumberMoney = damageNumberMoney;
+	}
+	public String getRepairCode() {
+		return repairCode;
+	}
+	public void setRepairCode(String repairCode) {
+		this.repairCode = repairCode;
+	}
+	public String getRepairName() {
+		return repairName;
+	}
+	public void setRepairName(String repairName) {
+		this.repairName = repairName;
 	}
 	public String getRepairLowCode() {
 		return repairLowCode;
@@ -129,16 +141,16 @@ public class DamageLow {
 	public void setIsLow(String isLow) {
 		this.isLow = isLow;
 	}
-	public String getDamageLoseMoney() {
+	public BigDecimal getDamageLoseMoney() {
 		return damageLoseMoney;
 	}
-	public void setDamageLoseMoney(String damageLoseMoney) {
+	public void setDamageLoseMoney(BigDecimal damageLoseMoney) {
 		this.damageLoseMoney = damageLoseMoney;
 	}
-	public String getDamageLowMoney() {
+	public BigDecimal getDamageLowMoney() {
 		return damageLowMoney;
 	}
-	public void setDamageLowMoney(String damageLowMoney) {
+	public void setDamageLowMoney(BigDecimal damageLowMoney) {
 		this.damageLowMoney = damageLowMoney;
 	}
 	public String getDamageLowNumber() {
@@ -153,15 +165,24 @@ public class DamageLow {
 	public void setRepairLeve(String repairLeve) {
 		this.repairLeve = repairLeve;
 	}
+	public Date getDamageLowDate() {
+		return damageLowDate;
+	}
+	public void setDamageLowDate(Date damageLowDate) {
+		this.damageLowDate = damageLowDate;
+	}
 	@Override
 	public String toString() {
 		return "DamageLow [id=" + id + ", damageId=" + damageId + ", reportNumber=" + reportNumber
 				+ ", underwritingCode=" + underwritingCode + ", plateNumber=" + plateNumber + ", damageCode="
 				+ damageCode + ", damageName=" + damageName + ", damageMoney=" + damageMoney + ", damageNuclear="
-				+ damageNuclear + ", damageNumberMoney=" + damageNumberMoney + ", repairLowCode=" + repairLowCode
-				+ ", repairLowName=" + repairLowName + ", isLow=" + isLow + ", damageLoseMoney=" + damageLoseMoney
-				+ ", damageLowMoney=" + damageLowMoney + ", damageLowNumber=" + damageLowNumber + ", repairLeve="
-				+ repairLeve + ", damageLowDate=" + damageLowDate + "]";
+				+ damageNuclear + ", damageNumberMoney=" + damageNumberMoney + ", repairCode=" + repairCode
+				+ ", repairName=" + repairName + ", repairLowCode=" + repairLowCode + ", repairLowName=" + repairLowName
+				+ ", isLow=" + isLow + ", damageLoseMoney=" + damageLoseMoney + ", damageLowMoney=" + damageLowMoney
+				+ ", damageLowNumber=" + damageLowNumber + ", repairLeve=" + repairLeve + ", damageLowDate="
+				+ damageLowDate + "]";
 	}
+	
+	
 	
 }

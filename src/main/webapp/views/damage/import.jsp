@@ -9,34 +9,13 @@
       <div class="tpl-portlet-components">
 	<div class="am-tabs" data-am-tabs>
 			  <ul class="am-tabs-nav am-nav am-nav-tabs">
-			    <li class="am-active"><a href="#tab1">定损导入</a></li>
 			    <li><a href="#tab2">低碳导入</a></li>
 			     <li><a href="#tab3">清单导入</a></li>
 			  </ul>
   <div class="am-tabs-bd">
-    <div class="am-tab-panel am-fade am-in am-active" id="tab1">
-	     <div class="portlet-title">
-				<div class="caption font-green bold">
-					<span class="am-icon-code"></span> 定损导入
-				</div>
-			</div>
-				<div style="margin: 20px;">
-					 <form method="POST" enctype="multipart/form-data" onsubmit="return false;"> 
-						<div class="am-form-group am-form-file">
-							<button type="button" class="am-btn am-btn-danger am-btn-sm">
-								<i class="am-icon-cloud-upload"></i> 选择要上传文件
-							</button>
-							<input id="damagefile" type="file" name="damagefile">
-						</div>
-						<div id="file-list-damage"></div>
-						<input type="button" value="确定上传" class="am-btn am-btn-primary" id="inport_file_damage" onclick="importDamageExcel()">
-					</form>
-				</div>
-    </div>
     <div class="am-tab-panel am-fade" id="tab2">
 	     <div class="portlet-title">
-				<div class="caption font-green bold">
-					<span class="am-icon-code"></span> 低碳导入
+				<div class="caption font-green bold">低碳导入
 				</div>
 			</div>
 				<div style="margin: 20px;">
@@ -55,8 +34,7 @@
     </div>
     <div class="am-tab-panel am-fade" id="tab3">
     		<div class="portlet-title">
-				<div class="caption font-green bold">
-					<span class="am-icon-code"></span> 清单导入
+				<div class="caption font-green bold"> 清单导入
 				</div>
 			</div>
 				<div style="margin: 20px;">

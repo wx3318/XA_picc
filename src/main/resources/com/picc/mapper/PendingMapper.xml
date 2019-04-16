@@ -210,8 +210,7 @@
 		on i.institution_code=p.institution_code
 		LEFT JOIN case_table c ON c.id = p.case_station
 		LEFT JOIN `user` u1 on u1.username=p.insurance_code
-		where  i.institution_name is null  and p.case_character NOT like 's%' AND p.case_station IN (2,3) and p.area_type is null
-		
+		where  i.institution_name is null  and p.case_character NOT like 's%' AND p.case_station IN (2,3) and p.area_type is null		
 	</select>
 	<update id="updatePending" parameterType="java.util.List">
 		update pending_table

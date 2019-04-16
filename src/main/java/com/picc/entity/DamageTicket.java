@@ -1,5 +1,6 @@
 package com.picc.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -16,9 +17,9 @@ public class DamageTicket {
 	//换件件数
 	private String damageTicketNumber;
 	//换件金额
-	private String damageTicketMoney;
+	private BigDecimal damageTicketMoney;
 	//工时金额
-	private String damageTimeMoney;
+	private BigDecimal damageTimeMoney;
 	//定损员代码
 	private String damageCode;
 	//定损员姓名
@@ -31,6 +32,18 @@ public class DamageTicket {
 	private String repairLeve;
 	//定损完成时间
 	private Date damageTicketDate;
+	public BigDecimal getDamageTicketMoney() {
+		return damageTicketMoney;
+	}
+	public void setDamageTicketMoney(BigDecimal damageTicketMoney) {
+		this.damageTicketMoney = damageTicketMoney;
+	}
+	public BigDecimal getDamageTimeMoney() {
+		return damageTimeMoney;
+	}
+	public void setDamageTimeMoney(BigDecimal damageTimeMoney) {
+		this.damageTimeMoney = damageTimeMoney;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -54,18 +67,6 @@ public class DamageTicket {
 	}
 	public void setDamageTicketNumber(String damageTicketNumber) {
 		this.damageTicketNumber = damageTicketNumber;
-	}
-	public String getDamageTicketMoney() {
-		return damageTicketMoney;
-	}
-	public void setDamageTicketMoney(String damageTicketMoney) {
-		this.damageTicketMoney = damageTicketMoney;
-	}
-	public String getDamageTimeMoney() {
-		return damageTimeMoney;
-	}
-	public void setDamageTimeMoney(String damageTimeMoney) {
-		this.damageTimeMoney = damageTimeMoney;
 	}
 	public String getDamageCode() {
 		return damageCode;
