@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.WorkDayMapper"> 
+	
+	<insert id="insertWorkDay" keyProperty="id" useGeneratedKeys="true"  parameterType="com.picc.entity.WorkDay">
+	INSERT INTO work_day 
+  	( month,days, create_date, create_name,create_id)
+  	VALUES
+  	(#{month,jdbcType=VARCHAR},#{days,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{createName,jdbcType=VARCHAR},#{createId,jdbcType=INTEGER})
+	</insert>
+	<select id="getWorkDayList" parameterType="com.picc.entity.WorkDay" resultType="java.util.Map">
+	select id,month,days, create_date, create_name
+	from work_day
+	<where>
+		<if test="month!=null and month!=''">
+			month=#{month}
+		</if>
+	</where>
+	</select>
+	
+	<select id="getWorkDay" resultType="java.util.Map" parameterType="com.picc.entity.WorkDay">
+		select month,days
+		from work_day
+		where month=#{month}
+		order by create_date DESC
+		LIMIT 1
+	</select>
+</mapper>

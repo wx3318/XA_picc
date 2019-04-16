@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/task 
+        http://www.springframework.org/schema/task/spring-task-4.3.xsd">
+    <!-- 开启组件扫描 -->
+    <context:component-scan base-package="com.picc.controller"></context:component-scan>
+   <!--  <task:annotation-driven scheduler="myScheduler"/> 
+     <task:scheduler id="myScheduler" pool-size="5"/> -->
+    <!-- 开启mvc注解 -->
+  <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <!--  JSON转换器 -->
+            <bean id="fastJsonHttpMessageConverter"
+                  class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="charset" value="UTF-8"/>
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>text/json;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+                <property name="features">
+                    <list>
+                        <value>WriteDateUseDateFormat</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+
+    <!-- 配置视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+         <property name="prefix" value="/views/" />
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+    <!-- 上传文件 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8" />
+		<!-- 指定所上传文件的总大小不能超过10485760000B。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+		<property name="maxUploadSize" value="10000000" />
+		<property name="maxInMemorySize" value="100000" />
+	</bean>
+	
+<!-- 	<aop:config proxy-target-class="true"/> -->
+    <!-- 开启shiro注解-->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor">
+        <property name="proxyTargetClass" value="true" />
+    </bean>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    
+    <!-- shiro异常跳转 -->
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
+        <property name="exceptionMappings">  
+            <props>  
+                <prop key="org.apache.shiro.authz.UnauthorizedException">/error/noPermissions</prop>  
+                <prop key="org.apache.shiro.authz.UnauthenticatedException">/error/noPermissions</prop>  
+                           
+            </props>  
+        </property>  
+    </bean>	
+	 <mvc:interceptors>
+	    <!--登录拦截器-->
+	       <mvc:interceptor>
+	            <mvc:mapping path="/**"/>
+	            <bean class="com.picc.interceptor.LoginInterceptor">
+		            <property name="allowUrls">  
+			            <list>  
+			              <!-- 如果请求中包含以下路径，则不进行拦截 -->  
+			              <value>/login</value>  
+			              <value>/js</value>  
+			              <value>/css</value>  
+			              <value>/image</value>  
+			              <value>/images</value> 
+			              <value>/font</value> 
+			              <value>/upload</value> 
+			              <value>/test/</value> 
+			              <value>/javascript</value> 
+			            </list>  
+			         </property>  
+		       </bean>
+	        </mvc:interceptor>
+   	 </mvc:interceptors> 
+    <!-- 静态资源的加载 -->
+	<mvc:default-servlet-handler />
+
+</beans>

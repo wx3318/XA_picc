@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.WorkTimeMapper"> 
+	<resultMap type="com.picc.entity.WorkTime" id="workTimeMap">
+		<result column="id" property="id"/>
+		<result column="username" property="userName"/>
+		<result column="u_name" property="uName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="work_date" property="workDate"/>
+		<result column="create_date" property="createDate"/>
+		<result column="message" property="message"/>
+		<result column="station" property="station"/>
+		<result column="group_id" property="groupId"/>
+	</resultMap>
+	<insert id="saveWorkTimeList" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
+		INSERT INTO work_time 
+	  	( username,u_name, start_time, end_time, work_date, create_date,station,group_id)
+	  	VALUES
+	  	<foreach collection="worktimelist" item="worktime" index="index" separator=",">
+	  	(#{worktime.userName},#{worktime.uName},#{worktime.startTime},#{worktime.endTime},#{worktime.workDate},#{worktime.createDate},#{worktime.station},#{worktime.groupId})
+	  	</foreach>
+	</insert>
+	<update id="updateWorkTimeListStart" parameterType="java.util.List">
+		UPDATE work_time
+		SET 
+		 start_time = CASE id 
+	    <foreach collection="worktimelist" item="worktime">
+			WHEN #{worktime.id} THEN #{worktime.startTime}
+		</foreach>
+	    	END
+			WHERE id in
+		<foreach collection="worktimelist" item="worktime" open="(" separator="," close=")">
+			#{worktime.id} 
+		</foreach>	
+	</update>
+	
+	<update id="updateWorkTimeListEnd" parameterType="java.util.List">
+		UPDATE work_time
+		SET end_time = CASE id
+		<foreach collection="worktimelist" item="worktime">
+			WHEN #{worktime.id} THEN #{worktime.endTime}
+		</foreach>
+			END
+			WHERE id in
+		<foreach collection="worktimelist" item="worktime" open="(" separator="," close=")">
+			#{worktime.id} 
+		</foreach>	
+	
+	</update>
+
+	<select id="getWorkTimeByUname"  resultMap="workTimeMap" parameterType="com.picc.entity.WorkTime">
+		SELECT w.id,w.username,w.u_name, w.start_time, w.end_time, w.work_date, w.create_date
+		FROM work_time w
+		WHERE w.username=#{worktime.userName} and w.work_date=#{worktime.workDate, jdbcType=DATE}
+	</select>
+
+	<select id="getWorkTimeByWorkTime"  resultType="java.util.Map" parameterType="com.picc.entity.WorkTime">
+		SELECT w.id,w.username,w.u_name, w.start_time, w.end_time, w.work_date, w.create_date,w.message,p.group_name,w.station
+		FROM work_time w 
+		left join group_p p on w.group_id=p.id 
+		
+		 <where>
+			 1=1
+			<if test="userName !=null and userName!='' ">
+	    		and w.username = #{userName}	
+	    	</if>
+	    	 <if test="groupId !=null and groupId!=0 ">
+	    		and w.group_id = #{groupId}	
+	    	</if>
+	    	<if test="uName !=null and uName!=''">
+	    		and w.u_name like "%"#{uName}"%"
+	    	</if>
+	    	<if test="startWorkDate != null ">
+		        and w.work_date  <![CDATA[>=]]> #{startWorkDate,jdbcType=TIMESTAMP}
+		    </if>	      
+		    <if test="endWorkDate != null ">
+		        and w.work_date <![CDATA[<=]]> #{endWorkDate,jdbcType=TIMESTAMP}
+		    </if>
+	    	<if test="workTion !=null and workTion !=''">    	 
+	    		<if test="workTion == 1">
+	    			and w.start_time is not null 
+	    			and 
+	    			((date_format(start_time, '%H:%i:%S') <![CDATA[>=]]>  date_format('2018-01-01 08:31:00', '%H:%i:%S')
+					AND date_format(start_time, '%H:%i:%S') <![CDATA[<]]> date_format('2018-01-01 12:00:00', '%H:%i:%S'))
+					OR  date_format(start_time, '%H:%i:%S') <![CDATA[>]]>  date_format('2018-01-01 14:01:00', '%H:%i:%S'))
+	    		</if> 
+	    		<if test="workTion == 2">
+	    			and w.start_time is  null and w.end_time is null
+	    		</if>
+	    		<if test="workTion == 3">
+	    			and w.start_time is not null and w.end_time is null	
+	    		</if>
+	    		<if test="workTion == 4">
+	    			and w.start_time is  null and w.end_time is not null	
+	    		</if>
+	    		<if test="workTion == 5">
+	    			and w.station = 2
+	    		</if>			
+	    	</if>
+	   	</where> 
+	   	ORDER BY w.work_date DESC,w.group_id
+	</select>
+	<select id="getWorkTimeByKey" parameterType="java.lang.Integer" resultMap="workTimeMap">
+		SELECT w.id,w.username,w.u_name, w.start_time, w.end_time, w.work_date, w.create_date,w.message,w.group_id,w.station
+		FROM work_time w
+		WHERE w.id=#{id}
+	</select>
+	<update id="updateWorkTime" parameterType="com.picc.entity.WorkTime">
+		UPDATE work_time w
+		SET w.message=#{message},
+			w.update_id= #{updateId},
+			w.update_name= #{updateName},
+			w.station= #{station},
+			w.update_date= #{updateDate , jdbcType=DATE}
+		WHERE w.id=#{id}
+	</update>
+	<update id="updateWorkTimeStart" parameterType="com.picc.entity.WorkTime">
+		UPDATE work_time w
+		SET 
+			w.start_time= #{startTime}
+		WHERE w.id=#{id}
+	
+	</update>
+	<update id="updateWorkTimeEnd" parameterType="com.picc.entity.WorkTime">
+		UPDATE work_time w
+		SET 
+			w.end_time= #{endTime}
+		WHERE w.id=#{id}
+	</update>
+	<select id="getWorkTimeMonth" resultType="java.util.Map" parameterType="com.picc.entity.WorkTime">
+		WITH picc_workday AS (
+		        SELECT COUNT(*) AS workSize,username ,
+						date_format(work_date, '%Y-%m') AS workDate
+						FROM work_time
+						WHERE 
+						date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m')
+						AND station =1 
+						AND (date_format(start_time, '%H:%i:%S')  <![CDATA[<]]>  date_format('2018-01-01 10:00:00', '%H:%i:%S')
+						AND date_format(end_time, '%H:%i:%S') <![CDATA[>]]> date_format('2018-01-01 17:29:59', '%H:%i:%S') 						)
+						GROUP BY username,date_format(work_date, '%Y-%m')
+		        ),
+		     picc_levaeday AS (
+		     	SELECT COUNT(*) AS leatSize,username 
+					FROM work_time
+	         		WHERE 
+	         		date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m')
+	         		AND station = 1 and start_time is  null and end_time is null
+	         	GROUP BY username,date_format(work_date, '%Y-%m')
+		     ) ,
+		     picc_lastday AS (
+						SELECT COUNT(*) AS lastSize,username 
+						FROM work_time
+						WHERE 	
+						date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+						AND  ((date_format(start_time, '%H:%i:%S') &gt;  date_format('2018-01-01 08:31:00', '%H:%i:%S')
+						AND date_format(start_time, '%H:%i:%S') &lt; date_format('2018-01-01 12:00:00', '%H:%i:%S'))
+						OR  date_format(start_time, '%H:%i:%S') &gt;  date_format('2018-01-01 14:01:00', '%H:%i:%S'))
+						AND station=1 and start_time is NOT null 
+						GROUP BY username,date_format(work_date, '%Y-%m')
+		     ) , 
+				picc_listday AS (
+						SELECT COUNT(*) AS endSize,username 
+						FROM work_time
+						WHERE 	
+						date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+						AND station=1  and start_time is NOT null and end_time is null
+						GROUP BY username,date_format(work_date, '%Y-%m')
+		     ), 
+		     picc_startday AS (
+						SELECT COUNT(*) AS startSize,username 
+						FROM work_time
+						WHERE 	
+						date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+						AND station=1  and start_time is  null and end_time is NOT null
+						GROUP BY username,date_format(work_date, '%Y-%m')
+		     ),
+				picc_askday AS (
+						SELECT COUNT(*) AS askSize,username 
+						FROM work_time
+						WHERE 	
+						date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+						AND station= 2					
+					GROUP BY username,date_format(work_date, '%Y-%m')
+		     ),
+		     picc_chalfday AS (
+					SELECT COUNT(*) AS chalfSize,username 
+						FROM work_time
+						WHERE 
+						date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m')
+						AND station =1 
+						AND ((date_format(start_time, '%H:%i:%S')  <![CDATA[<]]>  date_format('2018-01-01 10:00:00', '%H:%i:%S')
+						AND date_format(end_time, '%H:%i:%S') <![CDATA[<]]> date_format('2018-01-01 15:00:00', '%H:%i:%S'))
+						OR date_format(start_time, '%H:%i:%S')  <![CDATA[>]]>  date_format('2018-01-01 10:01:00', '%H:%i:%S'))
+						GROUP BY username,date_format(work_date, '%Y-%m')
+		     ),
+		     picc_qhalfday AS (
+					SELECT COUNT(*) AS qhalfSize,username 
+						FROM work_time
+						WHERE 
+						date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m')
+						AND station = 2 
+						AND ((date_format(start_time, '%H:%i:%S')  <![CDATA[<]]>  date_format('2018-01-01 10:00:00', '%H:%i:%S')
+						AND date_format(end_time, '%H:%i:%S') <![CDATA[<]]> date_format('2018-01-01 15:00:00', '%H:%i:%S'))
+						OR date_format(start_time, '%H:%i:%S')  <![CDATA[>]]>  date_format('2018-01-01 12:00:00', '%H:%i:%S'))
+						GROUP BY username,date_format(work_date, '%Y-%m')
+		     )
+		
+		     SELECT 
+		         a.username AS userName,
+			       g.group_name AS groupName,
+							a.name as name,
+							b.workDate,
+							b.workSize,
+							c.leatSize,
+							d.lastSize,
+							e.endSize,
+							f.askSize,
+							n.startSize,
+							h.chalfSize,
+							i.qhalfSize
+		       FROM  `user` AS a
+		     LEFT JOIN  picc_workday AS b  ON a.username = b.username
+		     LEFT JOIN picc_levaeday c ON c.username = a.username
+			 LEFT JOIN	picc_lastday d ON d.username=a.username
+			 LEFT JOIN	picc_listday e ON e.username=a.username
+			 LEFT JOIN	picc_startday n ON n.username=a.username
+			 LEFT JOIN	picc_askday f ON f.username=a.username
+			 LEFT JOIN	picc_chalfday h ON h.username=a.username
+			 LEFT JOIN	picc_qhalfday i ON i.username=a.username
+		     LEFT JOIN group_p g ON a.group_id = g.id
+			<where>
+				 a.group_id is not null  and (a.work_mes='在职' or (end_work <![CDATA[<=]]> #{endWorkDate,jdbcType=DATE} and end_work<![CDATA[>=]]> #{startWorkDate,jdbcType=DATE} )) 
+				<if test="groupId!=null">
+				  and a.group_id=#{groupId}	
+				</if>
+				<if test="userName!=null">
+				 and a.username =#{userName}	
+				</if>
+				<if test="uName!=null">
+				and a.name like "%"#{uName}"%"
+				</if>
+			</where>
+			ORDER BY a.group_id,a.username
+	</select>
+	<select id="getWorkTimeDay" resultType="java.util.Map" parameterType="com.picc.entity.WorkTime">
+		WITH picc_group AS (
+		        SELECT COUNT(*) AS groupSize,group_id					
+					FROM user
+					WHERE 	
+					work_mes='在职'  
+				GROUP BY group_id 
+		        ),
+		     picc_come AS (
+		     	SELECT COUNT(*) AS comeSize,group_id 
+					 FROM work_time
+	         		 WHERE 
+	        		 work_date = #{workDate , jdbcType=DATE}
+					 AND station=1 and start_time is NOT null 
+	         	GROUP BY group_id
+		     ) ,
+		     picc_last AS (
+				SELECT COUNT(*) AS lastSize,group_id 
+					FROM work_time
+					WHERE 	
+					work_date = #{workDate , jdbcType=DATE} 
+					and station=1  and start_time is  null 
+				GROUP BY group_id
+		     ) , 
+			picc_leave AS (
+				SELECT COUNT(*) AS leaveSize,group_id 
+					FROM work_time
+					WHERE 
+					work_date = #{workDate , jdbcType=DATE} 
+					AND ((date_format(start_time, '%H:%i:%S') &gt;  date_format('2018-01-01 08:31:00', '%H:%i:%S')
+						AND date_format(start_time, '%H:%i:%S') &lt; date_format('2018-01-01 12:00:00', '%H:%i:%S'))
+						OR  date_format(start_time, '%H:%i:%S') &gt;  date_format('2018-01-01 14:01:00', '%H:%i:%S'))
+					AND station=1  
+				GROUP BY group_id
+		     ), 
+			picc_ask AS (
+				SELECT COUNT(*) AS askSize,group_id 
+					FROM work_time
+					WHERE 	
+					work_date = #{workDate , jdbcType=DATE} 
+					AND station=2					
+				GROUP BY group_id
+		     )
+		     SELECT 
+			       a.group_name AS groupName,
+			       a.id AS groupId,
+				   b.groupSize,
+				   c.comeSize,
+				   d.lastSize,
+				   e.leaveSize,
+				   f.askSize,
+				   u.name
+		     FROM  `group_p` AS a
+		     LEFT JOIN  picc_group AS b  ON a.id = b.group_id
+		     LEFT JOIN picc_come c ON c.group_id = a.id
+			 LEFT JOIN	picc_last d ON d.group_id=a.id
+			 LEFT JOIN	picc_leave e ON e.group_id=a.id
+		     LEFT JOIN	picc_ask f ON f.group_id=a.id
+			 LEFT JOIN (SELECT u.group_id,u.name FROM user u WHERE role_id=4) as u on u.group_id = a.id 
+			 WHERE  a.id <![CDATA[<>]]>21 and a.id is not null
+			 ORDER BY a.id 
+	</select>
+	<insert id="saveWorkTime" keyProperty="id" useGeneratedKeys="true" parameterType="com.picc.entity.WorkTime">
+		INSERT INTO work_time 
+	  	( username,u_name, start_time, end_time, work_date, create_date,station,group_id)
+	  	VALUES
+	  	(#{userName},#{uName},#{startTime},#{endTime},#{workDate},#{createDate},#{station},#{groupId})
+	</insert>
+	<update id="updateWorkTimeGroup" parameterType="int">
+		UPDATE work_time set	
+		group_id=#{groupId}
+		where userName=#{userName}
+	</update>
+	<select id="getLevaeDate" resultType="String" parameterType="com.picc.entity.WorkTime">
+		SELECT work_date  FROM work_time WHERE date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+		AND start_time IS NULL AND end_time IS NULL AND station=1 
+		AND username=#{userName}
+	</select>
+	<select id="getLastDate" resultType="String" parameterType="com.picc.entity.WorkTime">
+		SELECT work_date FROM work_time WHERE station=1 AND date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+		AND ((date_format(start_time, '%H:%i:%S') >  date_format('2018-01-01 08:31:00', '%H:%i:%S')
+		AND date_format(start_time, '%H:%i:%S') &lt; date_format('2018-01-01 12:00:00', '%H:%i:%S'))
+		OR  date_format(start_time, '%H:%i:%S') >  date_format('2018-01-01 14:01:00', '%H:%i:%S'))
+		AND username=#{userName}
+	</select>
+	<select id="getStartDate" resultType="String" parameterType="com.picc.entity.WorkTime">
+		SELECT work_date FROM work_time WHERE date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+		AND station=1 AND start_time is  null AND end_time IS NOT NULL
+		AND username=#{userName}
+	</select>
+	<select id="getEndDate" resultType="String" parameterType="com.picc.entity.WorkTime">
+		SELECT work_date FROM work_time WHERE date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+		AND station=1 AND start_time is NOT NULL AND end_time IS NULL
+		AND username=#{userName}
+	</select>
+	<select id="getAskDate" resultType="String" parameterType="com.picc.entity.WorkTime">
+		SELECT work_date FROM work_time WHERE date_format(work_date, '%Y-%m') = date_format(#{workDate , jdbcType=DATE}, '%Y-%m') 
+		AND station=2
+		AND username=#{userName}
+	</select>
+</mapper>
