@@ -387,5 +387,7 @@
 		      </if>
 	    </trim>
 	  </sql>
-    
+     <select id="getUserListByGroupId" resultType="com.picc.entity.User" parameterType="Integer">
+	  	 select name,user_id from user where group_id=#{groupId}
+	  </select>
 </mapper>

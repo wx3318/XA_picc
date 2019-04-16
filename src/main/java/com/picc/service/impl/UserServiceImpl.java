@@ -367,4 +367,9 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return usermapper.queryUserList(param);
 	}
+	@Override
+	public List<User> getUserListByGroupId(Integer groupId) {
+		// TODO Auto-generated method stub
+		return usermapper.getUserListByGroupId(groupId);
+}
 }

@@ -47,4 +47,5 @@ public interface UserMapper {
      * @return 坐席列表
      */
     List<Map<String, Object>> queryUserList(Map<String, Object> param);
+    public List<User> getUserListByGroupId(Integer groupId);
 } 

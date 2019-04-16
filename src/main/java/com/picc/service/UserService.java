@@ -50,4 +50,5 @@ public interface UserService {
 	     * @return 坐席列表
 	     */
 		public List<Map<String, Object>> queryUserList(Map<String, Object> param) throws Exception;
+		public List<User> getUserListByGroupId(Integer groupId);
 }
