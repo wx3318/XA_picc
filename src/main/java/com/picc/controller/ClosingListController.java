@@ -1,6 +1,6 @@
 package com.picc.controller;
 /**
- * 结案案件
+ * 结案案件导入和导出
  * @author Lx
  */
 import java.io.File;
