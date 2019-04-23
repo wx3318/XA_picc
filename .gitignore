@@ -1,0 +1,8 @@
+# Created by .ignore support plugin (hsz.mobi)
+/target/
+/PICCproject.iml
+/.idea/
+/.settings/
+/.classpath
+/.project
+/.tern-project
