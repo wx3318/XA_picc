@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -122,10 +126,10 @@ public class ClosingRateController {
 				cl.setRegistrationNumber(String.valueOf(lo.get(1)));
 				cl.setRiskTime(Date.valueOf((String) lo.get(2)));
 				cl.setClosingTime(Date.valueOf((String) lo.get(3)));
-				cl.setProspectorCode(String.valueOf(lo.get(4)));
-				cl.setSurveyor(String.valueOf(lo.get(5)));
+				cl.setSurveyor(String.valueOf(lo.get(4)));
+				cl.setProspectorCode(String.valueOf(lo.get(5)));
 				cl.setDuration(String.valueOf(lo.get(6)));
-				cl.setAmountOfMoney(Double.parseDouble(String.valueOf(lo.get(7))));
+				cl.setAmountOfMoney(String.valueOf( lo.get(7)));
 				cl.setGroupName(String.valueOf(lo.get(8)));
 			}catch (Exception e) {
 				// TODO: handle exception
@@ -133,8 +137,12 @@ public class ClosingRateController {
 			//System.out.println(cl);
 			closingRateList.add(cl);	
 		}
+		ClosingRateList crl = new ClosingRateList();
+		List<ClosingRateList> closingListParam = closingRateListService.getClosingRateListParam(crl);
+
+		List<ClosingRateList> newDiffrent = getDiffrentNew(closingRateList,closingListParam);
 		//分批导入，防止数据过大导入失败
-		int closingListSize = closingRateList.size();
+		int closingListSize = newDiffrent.size();
 		int num = closingListSize/1000;
 		int num2 = closingListSize%1000;
 		List<ClosingRateList> arrayList = new ArrayList<>();
@@ -142,20 +150,20 @@ public class ClosingRateController {
 			arrayList.clear();
 		
 			for (int j = i*1000; j < (1 + i) * 1000; j++) {
-				arrayList.add(closingRateList.get(j));
+				arrayList.add(newDiffrent.get(j));
 			}
 			closingRateListService.importClosingRateList(arrayList);
 		}
 		if (num2 != 0)
 		{
 			arrayList.clear();
-			for (int i = num*1000; i < closingRateList.size(); i++) {
-				arrayList.add(closingRateList.get(i));
+			for (int i = num*1000; i < newDiffrent.size(); i++) {
+				arrayList.add(newDiffrent.get(i));
 			}
 			closingRateListService.importClosingRateList(arrayList);
 		}
 		out = response.getWriter();
-		out.print("导入成功"+closingRateList.size());
+		out.print("导入成功"+newDiffrent.size());
 		out.flush();
 		out.close();
 		String content="结案率结案导入";
@@ -198,10 +206,10 @@ public class ClosingRateController {
 				cl.setReportingTime(Date.valueOf((String) lo.get(2)));
 				cl.setRiskTime(Date.valueOf((String) lo.get(3)));
 				cl.setFilingTime(Date.valueOf((String) lo.get(4)));
-				cl.setEstimatedLossAmount(Double.parseDouble(String.valueOf(lo.get(5))));
+				cl.setEstimatedLossAmount(String.valueOf( lo.get(5)));
 				cl.setCaseType(String.valueOf(lo.get(6)));
-				cl.setProspectorCode(String.valueOf(lo.get(7)));
-				cl.setSurveyor(String.valueOf(lo.get(8)));
+				cl.setSurveyor(String.valueOf(lo.get(7)));
+				cl.setProspectorCode(String.valueOf(lo.get(8)));
 				cl.setGroupName(String.valueOf(lo.get(9)));
 			}catch (Exception e) {
 				// TODO: handle exception
@@ -209,9 +217,11 @@ public class ClosingRateController {
 			//System.out.println(cl);
 			closingRateListPending.add(cl);	
 		}
-		
+		ClosingRateListPending crlp = new ClosingRateListPending();
+		List<ClosingRateListPending> closingRateListPendingParam = closingRateListService.getClosingRateListPendingParam(crlp);
+		List<ClosingRateListPending> newDiffrent = getDiffrentNew1(closingRateListPending,closingRateListPendingParam);
 		//分批导入，防止数据过大导入失败
-		int closingListSize = closingRateListPending.size();
+		int closingListSize = newDiffrent.size();
 		int num = closingListSize/1000;
 		int num2 = closingListSize%1000;
 		List<ClosingRateListPending> arrayList = new ArrayList<>();
@@ -219,21 +229,21 @@ public class ClosingRateController {
 			arrayList.clear();
 		
 			for (int j = i*1000; j < (1 + i) * 1000; j++) {
-				arrayList.add(closingRateListPending.get(j));
+				arrayList.add(newDiffrent.get(j));
 			}
 			closingRateListService.importClosingRateListPending(arrayList);
 		}
 		if (num2 != 0)
 		{
 			arrayList.clear();
-			for (int i = num*1000; i < closingRateListPending.size(); i++) {
-				arrayList.add(closingRateListPending.get(i));
+			for (int i = num*1000; i < newDiffrent.size(); i++) {
+				arrayList.add(newDiffrent.get(i));
 			}
 			closingRateListService.importClosingRateListPending(arrayList);
 		}
 		
 		out = response.getWriter();
-		out.print("导入成功"+closingRateListPending.size());
+		out.print("导入成功"+newDiffrent.size());
 		out.flush();
 		out.close();
 		String content="结案率未结导入";
@@ -416,5 +426,69 @@ public class ClosingRateController {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	/**
+	 * 新增案件/已结案件
+	 * @param list1
+	 * @param list2
+	 * @return
+	 */
+	private static List<ClosingRateList> getDiffrentNew(List<ClosingRateList> list1, List<ClosingRateList> list2) {
+		//List1 中有 List2 中没有的
+	     List<ClosingRateList> diff = new ArrayList<ClosingRateList>();
+	     Map<String,Integer> map = new HashMap<String,Integer>(list1.size());
+	     for (ClosingRateList string : list1) {
+	         map.put(string.getRegistrationNumber(), 1);
+	     }
+	     for (ClosingRateList string : list2) {
+	         if(map.get(string.getRegistrationNumber())!=null)
+	         {
+	             map.put(string.getRegistrationNumber(), 2);
+	             continue;
+	         }
+	     }
+	     for(Entry<String, Integer> entry : map.entrySet()) {
+	    	 if(entry.getValue()==1) {
+	    		 for(ClosingRateList string : list1) {
+	            	 if(string.getRegistrationNumber().equals(entry.getKey()) ) {
+	            		 diff.add(string);
+	            		 break;
+	            	 }
+	             }        		 
+	    	 }
+	     }     
+	    return diff;       
+	}
+	/**
+	 * 新增案件/已结案件
+	 * @param list1
+	 * @param list2
+	 * @return
+	 */
+	private static List<ClosingRateListPending> getDiffrentNew1(List<ClosingRateListPending> list1, List<ClosingRateListPending> list2) {
+		//List1 中有 List2 中没有的
+	     List<ClosingRateListPending> diff = new ArrayList<ClosingRateListPending>();
+	     Map<String,Integer> map = new HashMap<String,Integer>(list1.size());
+	     for (ClosingRateListPending string : list1) {
+	         map.put(string.getRegistrationNumber(), 1);
+	     }
+	     for (ClosingRateListPending string : list2) {
+	         if(map.get(string.getRegistrationNumber())!=null)
+	         {
+	             map.put(string.getRegistrationNumber(), 2);
+	             continue;
+	         }
+	     }
+	     for(Entry<String, Integer> entry : map.entrySet()) {
+	    	 if(entry.getValue()==1) {
+	    		 for(ClosingRateListPending string : list1) {
+	            	 if(string.getRegistrationNumber().equals(entry.getKey()) ) {
+	            		 diff.add(string);
+	            		 break;
+	            	 }
+	             }        		 
+	    	 }
+	     }     
+	    return diff;       
 	}
 }

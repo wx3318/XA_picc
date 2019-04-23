@@ -15,4 +15,6 @@ public interface ClosingRateListService {
 	public int importClosingRateListPending( List<ClosingRateListPending> closingRateListPending);
 	public List<String> getClosingRateYearList();
 	public List<ClosingRateListMessage> getClosingRateList(ClosingListSummarySearchMessage closingListSummarySearchMessage);
+	public	List<ClosingRateList> getClosingRateListParam(ClosingRateList closingRateList);
+	public	List<ClosingRateListPending> getClosingRateListPendingParam(ClosingRateListPending closingRateListPending);
 }

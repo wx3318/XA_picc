@@ -10,7 +10,7 @@
 		<result column="prospector_code" jdbcType="VARCHAR" property="prospectorCode" />
 		<result column="surveyor" jdbcType="VARCHAR" property="surveyor" />
 		<result column="duration" jdbcType="VARCHAR" property="duration" />
-		<result column="amount_of_money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" property="amountOfMoney" />
+		<result column="amount_of_money" jdbcType="VARCHAR"  property="amountOfMoney" />
 		<result column="group_name" jdbcType="VARCHAR" property="groupName" /> 
 	</resultMap>
 	
@@ -31,7 +31,6 @@ CONCAT(ROUND(d.closedFiveNum/(CASE c.registrationFiveNum WHEN 0 THEN 1 ELSE c.re
 c.registrationOneDownNum as registrationOneDownNum,d.closedOneDownNum as closedOneDownNum,
 CONCAT(ROUND(d.closedOneDownNum/(CASE c.registrationOneDownNum WHEN 0 THEN 1 ELSE c.registrationOneDownNum END)*100,2 ),'%') AS closedOneDownRate,
 c.registrationOneUpNum as registrationOneUpNum,d.closedOneUpNum as closedOneUpNum,
-
 CONCAT(ROUND(d.closedOneUpNum/(CASE c.registrationOneUpNum WHEN 0 THEN 1 ELSE c.registrationOneUpNum END)*100,2 ),'%')AS closedOneUpRate
 FROM 
 (SELECT a.group_name AS group_name,
@@ -70,4 +69,12 @@ SUM(CASE WHEN DATE_FORMAT(a.closing_time, '%Y')=#{year}
 AND a.amount_of_money&gt;10000 THEN 1 ELSE 0 END)as closedOneUpNum
 FROM closing_rate_list AS a GROUP BY a.group_name ORDER BY a.group_name) d WHERE c.group_name=d.group_name;
     </select>
+    <select id="getClosingRateListParam" resultMap="closingRateListResult" parameterType="com.picc.entity.ClosingRateList" >
+    select c.report_number,c.registration_number,c.risk_time,c.closing_time,c.surveyor,c.prospector_code,
+		c.duration,c.amount_of_money,c.group_name from closing_rate_list c
+    
+    </select>
+
+
+
 </mapper>

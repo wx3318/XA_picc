@@ -1,4 +1,9 @@
-
+// 绑定重置查询事件
+    $('#btn-reset-pro').on('click', function() {
+        // 重置table查询
+    	
+    	window.location = "/PICCproject/picc/closing/closinglist.html";
+    });
 	
 
 //根据机构查人员信息

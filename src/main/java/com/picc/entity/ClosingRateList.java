@@ -1,5 +1,6 @@
 package com.picc.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.picc.common.BaseModel;
@@ -20,7 +21,7 @@ public class ClosingRateList extends BaseModel
 	private String surveyor;//查勘人
 	private String prospectorCode;//查勘人工号
 	private String duration;//结案时长
-	private Double amountOfMoney;//结案金额
+	private String amountOfMoney;//结案金额
 	private String groupName;//归属中心
 	public int getId() {
 		return id;
@@ -70,10 +71,12 @@ public class ClosingRateList extends BaseModel
 	public void setDuration(String duration) {
 		this.duration = duration;
 	}
-	public Double getAmountOfMoney() {
+	
+	
+	public String getAmountOfMoney() {
 		return amountOfMoney;
 	}
-	public void setAmountOfMoney(Double amountOfMoney) {
+	public void setAmountOfMoney(String amountOfMoney) {
 		this.amountOfMoney = amountOfMoney;
 	}
 	public String getGroupName() {
@@ -81,6 +84,29 @@ public class ClosingRateList extends BaseModel
 	}
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((registrationNumber == null) ? 0 : registrationNumber.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClosingRateList other = (ClosingRateList) obj;
+		if (registrationNumber == null) {
+			if (other.registrationNumber != null)
+				return false;
+		} else if (!registrationNumber.equals(other.registrationNumber))
+			return false;
+		return true;
 	}
 
 }

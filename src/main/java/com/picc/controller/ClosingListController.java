@@ -14,8 +14,12 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +57,7 @@ import com.picc.entity.ClosingListMessage;
 import com.picc.entity.ClosingListSummarySearchMessage;
 
 import com.picc.entity.Group;
+import com.picc.entity.Pending;
 import com.picc.entity.User;
 import com.picc.entity.UserCase;
 import com.picc.service.ClosingListMessageService;
@@ -142,12 +147,13 @@ public class ClosingListController {
 		return userList;
 	}
 	/**
-	 * 结案报表导入
+	 * 结案报表导入 
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/closinglistexcel.ajax", method = { RequestMethod.GET, RequestMethod.POST })
 	public void closingListUploadExcel(@RequestParam("file") MultipartFile file, HttpServletResponse response,HttpSession session)
 			throws Exception {
+		System.out.println("123");
 		PrintWriter out = null;
 		// ajax中午乱码处理
 		response.setCharacterEncoding("utf-8"); 
@@ -188,31 +194,43 @@ public class ClosingListController {
 			}
 			//System.out.println(cl);
 			closingList.add(cl);	
+			
 		}
+		
+		
+		
+		ClosingList cl = new ClosingList();
+		List<ClosingList> closingListParam = closingListService.getClosingListParam(cl);
+
+		List<ClosingList> newDiffrent = getDiffrentNew(closingList,closingListParam);
+		
+		
+		
 		//分批导入，防止数据过大导入失败
-		int closingListSize = closingList.size();
+		int closingListSize = newDiffrent.size();
 		int num = closingListSize/1000;
 		int num2 = closingListSize%1000;
 		List<ClosingList> arrayList = new ArrayList<>();
+		
 		for (int i = 0; i < num; i++) {
 			arrayList.clear();
 		
 			for (int j = i*1000; j < (1 + i) * 1000; j++) {
-				arrayList.add(closingList.get(j));
+				arrayList.add( newDiffrent.get(j));
 			}
 			closingListService.importClosingList(arrayList);
 		}
 		if (num2 != 0)
 		{
 			arrayList.clear();
-			for (int i = num*1000; i < closingList.size(); i++) {
-				arrayList.add(closingList.get(i));
+			for (int i = num*1000; i < newDiffrent.size(); i++) {
+				arrayList.add(newDiffrent.get(i));
 			}
 			closingListService.importClosingList(arrayList);
 		}
 		
 		out = response.getWriter();
-		out.print("导入成功"+closingList.size());
+		out.print("导入成功"+newDiffrent.size());
 		out.flush();
 		out.close();
 		String content="结案导入";
@@ -544,4 +562,37 @@ public void excelUserExport(HttpServletRequest request, HttpServletResponse resp
 		e.printStackTrace();
 	}
 }
+/**
+ * 新增案件/已结案件
+ * @param list1
+ * @param list2
+ * @return
+ */
+private static List<ClosingList> getDiffrentNew(List<ClosingList> list1, List<ClosingList> list2) {
+	//List1 中有 List2 中没有的
+     List<ClosingList> diff = new ArrayList<ClosingList>();
+     Map<String,Integer> map = new HashMap<String,Integer>(list1.size());
+     for (ClosingList string : list1) {
+         map.put(string.getRegistrationNumber(), 1);
+     }
+     for (ClosingList string : list2) {
+         if(map.get(string.getRegistrationNumber())!=null)
+         {
+             map.put(string.getRegistrationNumber(), 2);
+             continue;
+         }
+     }
+     for(Entry<String, Integer> entry : map.entrySet()) {
+    	 if(entry.getValue()==1) {
+    		 for(ClosingList string : list1) {
+            	 if(string.getRegistrationNumber().equals(entry.getKey()) ) {
+            		 diff.add(string);
+            		 break;
+            	 }
+             }        		 
+    	 }
+     }     
+    return diff;       
+}
+
 }

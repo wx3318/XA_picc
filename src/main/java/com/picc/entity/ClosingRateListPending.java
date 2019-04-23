@@ -1,5 +1,6 @@
 package com.picc.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.picc.common.BaseModel;
@@ -17,7 +18,7 @@ public class ClosingRateListPending extends BaseModel
 	private Date reportingTime;//报案时间
 	private Date riskTime;//出险时间
 	private Date filingTime;//立案时间
-	private Double estimatedLossAmount;//估损金额
+	private String estimatedLossAmount;//估损金额
 	private String caseType;//案件类型
 	private String surveyor;//查勘人
 	private String prospectorCode;//查勘人工号
@@ -58,10 +59,12 @@ public class ClosingRateListPending extends BaseModel
 	public void setFilingTime(Date filingTime) {
 		this.filingTime = filingTime;
 	}
-	public Double getEstimatedLossAmount() {
+	
+	
+	public String getEstimatedLossAmount() {
 		return estimatedLossAmount;
 	}
-	public void setEstimatedLossAmount(Double estimatedLossAmount) {
+	public void setEstimatedLossAmount(String estimatedLossAmount) {
 		this.estimatedLossAmount = estimatedLossAmount;
 	}
 	public String getCaseType() {
@@ -87,6 +90,29 @@ public class ClosingRateListPending extends BaseModel
 	}
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((registrationNumber == null) ? 0 : registrationNumber.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClosingRateListPending other = (ClosingRateListPending) obj;
+		if (registrationNumber == null) {
+			if (other.registrationNumber != null)
+				return false;
+		} else if (!registrationNumber.equals(other.registrationNumber))
+			return false;
+		return true;
 	}
 	
 }

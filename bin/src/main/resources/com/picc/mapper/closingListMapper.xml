@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.ClosingListMapper">
+	<resultMap type="com.picc.entity.ClosingList" id="closingListResult">	
+	<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="report_number" jdbcType="VARCHAR" property="reportNumber" />
+		<result column="registration_number" jdbcType="VARCHAR" property="registrationNumber" />
+		<result column="risk_time" jdbcType="DATE" javaType="java.util.Date"  property="riskTime" />
+		<result column="closing_time" jdbcType="DATE" javaType="java.util.Date"  property="closingTime" />
+		<result column="case_type" jdbcType="VARCHAR"  property="caseType" />
+		<result column="prospector_code" jdbcType="VARCHAR" property="prospectorCode" />
+		<result column="surveyor" jdbcType="VARCHAR" property="surveyor" />
+		<result column="duration" jdbcType="VARCHAR" property="duration" />
+		<result column="amount_of_money" jdbcType="VARCHAR" property="amountOfMoney" />
+		<!-- <result column="group_id" jdbcType="VARCHAR" property="groupId" /> -->
+	</resultMap>
+	<select id="getClosingListParam" resultMap="closingListResult" parameterType="com.picc.entity.ClosingList" >
+		select c.report_number,c.registration_number,c.risk_time,c.closing_time,c.case_type,c.prospector_code,
+		c.surveyor,c.duration,c.amount_of_money from closing_list_table c
+		
+	</select>
+	 <insert id="importClosingList"  keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
+    	insert into closing_list_table 
+    	(report_number,registration_number,risk_time,closing_time,case_type,prospector_code,surveyor,duration,amount_of_money) VALUES
+		<foreach collection="closingList" item="closlist" index="index"  separator="," >
+		(#{closlist.reportNumber},#{closlist.registrationNumber},#{closlist.riskTime},#{closlist.closingTime},#{closlist.caseType},#{closlist.prospectorCode},#{closlist.surveyor},#{closlist.duration},#{closlist.amountOfMoney})
+		</foreach> 
+    </insert>
+    <select id="serachClosingListSummaryByGroupId" resultType="com.picc.entity.ClosingListSummarySearchMessage" parameterType="Integer">
+   			SELECT group_name,surveyor FROM  closing_list_table RIGHT JOIN USER ON closing_list_table.prospector_code=user.username LEFT JOIN group_p ON group_id=user.group_id where group_id=#{groupId} GROUP BY surveyor
+    </select>
+</mapper>

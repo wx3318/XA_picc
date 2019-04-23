@@ -11,7 +11,7 @@
 		<result column="case_type" jdbcType="VARCHAR" property="caseType" />
 		<result column="surveyor" jdbcType="VARCHAR" property="surveyor" />
 		<result column="reporting_time" jdbcType="DATE" javaType="java.util.Date"  property="reportingTime" />
-		<result column="estimated_loss_amount" jdbcType="DECIMAL" javaType="java.math.BigDecimal" property="estimatedLossAmount" />
+		<result column="estimated_loss_amount" jdbcType="VARCHAR"  property="estimatedLossAmount" />
 		<result column="group_name" jdbcType="VARCHAR" property="groupName" /> 
 	</resultMap>
 	
@@ -22,5 +22,12 @@
 		(#{closlist.registrationNumber},#{closlist.reportNumber},#{closlist.reportingTime},#{closlist.riskTime},#{closlist.filingTime},#{closlist.estimatedLossAmount},#{closlist.caseType},#{closlist.surveyor},#{closlist.prospectorCode},#{closlist.groupName})
 		</foreach> 
     </insert>
+     <select id="getClosingRateListPendingParam" resultMap="closingRateListPendingResult" parameterType="com.picc.entity.ClosingRateListPending" >
+    select c.registration_number,c.report_number,c.reporting_time,c.risk_time,c.filing_time,c.estimated_loss_amount,
+		c.case_type,c.surveyor,c.prospector_code,c.group_name from closing_rate_list_pending c
+    
+    </select>
+    
+
    
 </mapper>

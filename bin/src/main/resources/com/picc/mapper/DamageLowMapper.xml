@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.picc.dao.DamageLowMapper">
+	<insert id="saveDamageLowList" keyProperty="id" useGeneratedKeys="true"  parameterType="java.util.List">
+		INSERT INTO damage_low_table
+		(damage_id,report_number,underwriting_code,plate_number,damage_code,damage_name,damage_money,damage_nuclear,damage_number_money,
+		repair_low_code,repair_low_name,is_low,damage_lose_money,damage_low_money,damage_low_number,damage_low_date,repair_leve,repair_code,repair_name)
+		VALUES
+	  	<foreach collection="damageLowList" item="damagelow" index="index" separator=",">
+	  	(#{damagelow.damageId},#{damagelow.reportNumber},#{damagelow.underwritingCode},#{damagelow.plateNumber},#{damagelow.damageCode},#{damagelow.damageName},#{damagelow.damageMoney},#{damagelow.damageNuclear},
+	  	#{damagelow.damageNumberMoney},#{damagelow.repairLowCode},#{damagelow.repairLowName},#{damagelow.isLow},#{damagelow.damageLoseMoney},#{damagelow.damageLowMoney},#{damagelow.damageLowNumber},#{damagelow.damageLowDate},#{damagelow.repairLeve}
+	  	,#{damagelow.repairCode},#{damagelow.repairName})
+	  	</foreach>
+	</insert>
+</mapper>

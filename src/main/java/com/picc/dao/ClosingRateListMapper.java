@@ -20,4 +20,7 @@ public interface ClosingRateListMapper {
  public List<String> getYearList();
  //按条件查询
  public List<ClosingRateListMessage> getClosingRateList(ClosingListSummarySearchMessage closingListSummarySearchMessage);
+
+ public	List<ClosingRateList> getClosingRateListParam(ClosingRateList closingRateList);
+ public	List<ClosingRateListPending> getClosingRateListPendingParam(ClosingRateListPending closingRateListPending);
 }

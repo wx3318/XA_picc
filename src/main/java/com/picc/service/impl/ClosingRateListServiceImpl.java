@@ -37,5 +37,15 @@ public class ClosingRateListServiceImpl implements ClosingRateListService {
 		
 		return closingRateListMapper.getClosingRateList(closingListSummarySearchMessage);
 	}
+	@Override
+	public List<ClosingRateList> getClosingRateListParam(ClosingRateList closingRateList) {
+	
+		return closingRateListMapper.getClosingRateListParam(closingRateList);
+	}
+	@Override
+	public List<ClosingRateListPending> getClosingRateListPendingParam(ClosingRateListPending closingRateListPending) {
+		
+		return closingRateListMapper.getClosingRateListPendingParam(closingRateListPending);
+	}
 
 }
