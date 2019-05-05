@@ -112,6 +112,7 @@
 											<th width="100%" style="font-size: 25px; text-align:center;" colspan="13">${dateMonth}车险结案报表</th>
 										</tr>
 										<tr>
+										    <td rowspan="3" style="vertical-align:middle" >案件类型</td>
 											<td rowspan="3" style="vertical-align:middle" >案件总数(件)</td>
 											<td rowspan="3" style="vertical-align:middle">总金额(元)</td>
 											<td rowspan="3" style="vertical-align:middle">当期(天)</td>

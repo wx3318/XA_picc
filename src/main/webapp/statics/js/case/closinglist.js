@@ -28,6 +28,7 @@ $("#btn-search-pro").click( function(){
 	      $countId1.html("<tr></tr>");
 	   	  $(data).each(function(i,n){
 	   	  $countId1.append("<tr>" +
+	   			"<td style='vertical-align:middle'>"+n.myCaseType+"</td>"+
 	   	  		"<td style='vertical-align:middle'>"+n.totalCount+"</td>"+
 			"<td style='vertical-align:middle;text-align:center;'>"+n.sumMoney+"</td>"+
 			"<td style='vertical-align:middle;text-align:center'>"+n.nowCount+"</td>"+

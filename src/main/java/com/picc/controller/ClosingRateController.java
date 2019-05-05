@@ -126,8 +126,8 @@ public class ClosingRateController {
 				cl.setRegistrationNumber(String.valueOf(lo.get(1)));
 				cl.setRiskTime(Date.valueOf((String) lo.get(2)));
 				cl.setClosingTime(Date.valueOf((String) lo.get(3)));
-				cl.setSurveyor(String.valueOf(lo.get(4)));
-				cl.setProspectorCode(String.valueOf(lo.get(5)));
+				cl.setProspectorCode(String.valueOf(lo.get(4)));
+				cl.setSurveyor(String.valueOf(lo.get(5)));
 				cl.setDuration(String.valueOf(lo.get(6)));
 				cl.setAmountOfMoney(String.valueOf( lo.get(7)));
 				cl.setGroupName(String.valueOf(lo.get(8)));
@@ -208,8 +208,8 @@ public class ClosingRateController {
 				cl.setFilingTime(Date.valueOf((String) lo.get(4)));
 				cl.setEstimatedLossAmount(String.valueOf( lo.get(5)));
 				cl.setCaseType(String.valueOf(lo.get(6)));
-				cl.setSurveyor(String.valueOf(lo.get(7)));
-				cl.setProspectorCode(String.valueOf(lo.get(8)));
+				cl.setProspectorCode(String.valueOf(lo.get(7)));
+				cl.setSurveyor(String.valueOf(lo.get(8)));
 				cl.setGroupName(String.valueOf(lo.get(9)));
 			}catch (Exception e) {
 				// TODO: handle exception
