@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +57,7 @@ import com.picc.service.DamageLowService;
 import com.picc.service.DamageService;
 import com.picc.service.DamageTicketService;
 import com.picc.service.GroupService;
+import com.picc.service.OperationRecordService;
 import com.picc.service.UserService;
 import com.picc.util.ImportExcelUtil;
 
@@ -73,6 +75,8 @@ public class DamageController {
 	private GroupService groupService;
 	@Autowired
 	private UserService userservice;
+	@Autowired
+	private OperationRecordService oRdService;
 	/**
 	 * 定损导入页面
 	 * @param request
@@ -419,6 +423,7 @@ public class DamageController {
 			tk.setRepairLeve(String.valueOf(lo.get(10)).trim());
 			damageTicketList.add(tk);
 		}
+		
 		if(damageTicketList.size()>0) {
 			int saveDamageLowList = damageTicketService.saveDamageTicketList(damageTicketList);
 			out.print("新增数量 ："+saveDamageLowList);
@@ -634,8 +639,8 @@ public class DamageController {
 				OutputStream out = response.getOutputStream();
 				wbk.write(out);
 				out.close();
-				String content="未决归属出";
-			 //oRdService.insertRecord(content, user, Constant.OPERATION_TYPE_KEY.EXPORT);
+				String content="个人核损";
+			 oRdService.insertRecord(content, user, Constant.OPERATION_TYPE_KEY.EXPORT);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -851,8 +856,8 @@ public class DamageController {
 				OutputStream out = response.getOutputStream();
 				wbk.write(out);
 				out.close();
-				String content="未决归属出";
-			 //oRdService.insertRecord(content, user, Constant.OPERATION_TYPE_KEY.EXPORT);
+				String content="分中心核损";
+			 oRdService.insertRecord(content, user, Constant.OPERATION_TYPE_KEY.EXPORT);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -862,5 +867,36 @@ public class DamageController {
 		}
 	}
 	
-	
+	/**
+	 *查重
+	 * @param list1
+	 * @param list2
+	 * @return
+	 */
+	private static List<Pending> getDiffrentNew(List<Pending> list1, List<Pending> list2) {
+		//List1 中有 List2 中没有的
+         List<Pending> diff = new ArrayList<Pending>();
+         Map<String,Integer> map = new HashMap<String,Integer>(list1.size());
+         for (Pending string : list1) {
+             map.put(string.getRegistrationNumber(), 1);
+         }
+         for (Pending string : list2) {
+             if(map.get(string.getRegistrationNumber())!=null)
+             {
+                 map.put(string.getRegistrationNumber(), 2);
+                 continue;
+             }
+         }
+         for(Entry<String, Integer> entry : map.entrySet()) {
+        	 if(entry.getValue()==1) {
+        		 for(Pending string : list1) {
+                	 if(string.getRegistrationNumber().equals(entry.getKey()) ) {
+                		 diff.add(string);
+                		 break;
+                	 }
+                 }        		 
+        	 }
+         }     
+        return diff;       
+    }
 }

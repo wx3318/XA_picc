@@ -61,7 +61,9 @@
             </map>
         </property>
     </bean>
-    
+  
+ 
+
 	 <!--2.Mybatis的sqlSessionFactory  -->
     <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"></property>
@@ -73,6 +75,13 @@
              classpath*：能加载路径下多个资源文件
              -->  
         <property name="mapperLocations" value="classpath*:com/picc/mapper/*.xml"></property>
+ <!--        
+         <property name="configurationProperties">
+			<props>			
+	 			 在null时也调用 setter,适应于返回Map,3.2版本以上可用			 
+				<prop key="callSettersOnNulls">true</prop>
+			</props>
+		</property> -->
         
          <!-- 分页插件 pagehelper -->
 		    <property name="plugins">

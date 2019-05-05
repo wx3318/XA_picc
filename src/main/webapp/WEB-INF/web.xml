@@ -56,6 +56,11 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     
+    <!-- mybatis-配置 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:mybatis-setting.xml</param-value>
+    </context-param>
     <!--定时位置-->
   <!--   <context-param>
         <param-name>contextConfigLocation</param-name>

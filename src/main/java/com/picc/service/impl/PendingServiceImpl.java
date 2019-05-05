@@ -292,7 +292,7 @@ public class PendingServiceImpl implements PendingService {
 									pendingListOnShengEntry.get(size*4).setGroupId(String.valueOf(num-1));
 								}
 							}else {
-								pendingListOnShengEntry.get(size*4).setGroupId("2");
+								pendingListOnShengEntry.get(size*4).setGroupId("1");
 								pendingListOnShengEntry.get(size*4+1).setGroupId("3");							
 								pendingListOnShengEntry.get(size*4+2).setGroupId("4");
 							}						
@@ -531,7 +531,7 @@ public class PendingServiceImpl implements PendingService {
 									pendingListOnCqXnEntry.get(size*4).setGroupId(String.valueOf(num-1));
 								}
 							}else {
-								pendingListOnCqXnEntry.get(size*4).setGroupId("2");
+								pendingListOnCqXnEntry.get(size*4).setGroupId("1");
 								pendingListOnCqXnEntry.get(size*4+1).setGroupId("3");							
 								pendingListOnCqXnEntry.get(size*4+2).setGroupId("4");
 							}						
@@ -832,14 +832,14 @@ public class PendingServiceImpl implements PendingService {
 								
 								do {
 									int  num0=(int)(Math.random()*5);
-									if(num0!=0){
+									if(num0!=0 && num0!=2){
 										pendingListOnchengNoEntry.get(0).setGroupId(String.valueOf(num0));
 										break;
 									}
 								}while(true);
 								do {
 									int  num=(int)(Math.random()*5);
-									if(num!=0 ){									
+									if(num!=0 && num!=2){									
 										pendingListOnchengNoEntry.get(1).setGroupId(String.valueOf(num));
 										break;
 									}
@@ -847,7 +847,7 @@ public class PendingServiceImpl implements PendingService {
 								
 								do {
 									int  num1=(int)(Math.random()*5);
-									if(num1!=0 ){									
+									if(num1!=0 && num1!=2){									
 										pendingListOnchengNoEntry.get(2).setGroupId(String.valueOf(num1));
 										break;
 									}
@@ -1153,12 +1153,16 @@ public class PendingServiceImpl implements PendingService {
 						int  num=(int)(Math.random()*5);
 						if(num==0) {
 							num=num+1;
+						}else if(num==2){
+							num=num+1;
 						}
 						pendingListGroupUser.get(0).setGroupId(String.valueOf(num));
 					}else if(sizeleft==2) {
 						if(pendingListGroupUser.get(0).getReportNumber().equals(pendingListGroupUser.get(1).getReportNumber())) {
 							int  num=(int)(Math.random()*5);
 							if(num==0) {
+								num=num+1;
+							}else if(num==2){
 								num=num+1;
 							}
 							pendingListGroupUser.get(0).setGroupId(String.valueOf(num));
@@ -1167,6 +1171,8 @@ public class PendingServiceImpl implements PendingService {
 							int  num=(int)(Math.random()*5);
 							if(num==0) {
 								num=num+1;
+							}else if(num==2){
+								num=num+2;
 							}
 							if(num-1==0) {
 								pendingListGroupUser.get(0).setGroupId(String.valueOf(num));
@@ -1182,6 +1188,8 @@ public class PendingServiceImpl implements PendingService {
 							int  num=(int)(Math.random()*5);
 							if(num==0) {
 								num=num+1;
+							}else if(num==2){
+								num=num+2;
 							}
 							pendingListGroupUser.get(0).setGroupId(String.valueOf(num));
 							pendingListGroupUser.get(1).setGroupId(String.valueOf(num));
@@ -1195,6 +1203,8 @@ public class PendingServiceImpl implements PendingService {
 							int  num=(int)(Math.random()*5);
 							if(num==0) {
 								num=num+1;
+							}else if(num==2){
+								num=num+2;
 							}
 							pendingListGroupUser.get(1).setGroupId(String.valueOf(num));
 							pendingListGroupUser.get(2).setGroupId(String.valueOf(num));
@@ -1208,14 +1218,14 @@ public class PendingServiceImpl implements PendingService {
 							
 							do {
 								int  num0=(int)(Math.random()*5);
-								if(num0!=0){
+								if(num0!=0 && num0!=2){
 									pendingListGroupUser.get(0).setGroupId(String.valueOf(num0));
 									break;
 								}
 							}while(true);
 							do {
 								int  num=(int)(Math.random()*5);
-								if(num!=0 ){									
+								if(num!=0 && num!=2){									
 									pendingListGroupUser.get(1).setGroupId(String.valueOf(num));
 									break;
 								}
@@ -1223,7 +1233,7 @@ public class PendingServiceImpl implements PendingService {
 							
 							do {
 								int  num1=(int)(Math.random()*5);
-								if(num1!=0 ){									
+								if(num1!=0 && num1!=2){									
 									pendingListGroupUser.get(2).setGroupId(String.valueOf(num1));
 									break;
 								}

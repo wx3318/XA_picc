@@ -81,6 +81,18 @@ public class UserCaseServiceImpl implements UserCaseService {
 			if(mapEntity.get("endAllCase")==null) {
 				mapEntity.put("endAllCase", 0);
 			}
+			if(mapEntity.get("allNewCase")==null) {
+				mapEntity.put("allNewCase", 0);
+			}
+			if(mapEntity.get("diffchalleng")==null) {
+				mapEntity.put("diffchalleng", 0);
+			}
+			if(mapEntity.get("diffbudget")==null) {
+				mapEntity.put("diffbudget", 0);
+			}
+			if(mapEntity.get("diffstart")==null) {
+				mapEntity.put("diffstart", 0);
+			}
 			mapEntity.put("relt", relt++);
 		}
 		return monthUserCase;
